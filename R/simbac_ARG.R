@@ -1,4 +1,4 @@
-#' Create a full ancestral recombination graph (ARG) using simbac algorithm
+#' A full ancestral recombination graph (ARG) using simbac algorithm
 #'
 #' Simulate coalescent an recombination events by considering effective recombination rate.
 #' Assume finite site model.

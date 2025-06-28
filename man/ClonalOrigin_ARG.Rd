@@ -2,7 +2,7 @@
 % Please edit documentation in R/ClonalOrigin_ARG.R
 \name{ClonalOrigin_ARG}
 \alias{ClonalOrigin_ARG}
-\title{Create an approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
+\title{An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
 \usage{
 ClonalOrigin_ARG(
   n,

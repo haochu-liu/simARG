@@ -1,8 +1,8 @@
-#' Add mutations to an `FSM_ARG` object
+#' Add mutations to a `FSM_ARG` object
 #'
 #' Add mutations uniformly onto the edges of ARG with infinite site assumption.
 #'
-#' @param ARG An `FSM_ARG` object.
+#' @param ARG A `FSM_ARG` object.
 #' @param theta The mutation rate.
 #' @return Add a mutation matrix and a genotype dataframe to the `FSM_ARG` object.
 #' @export

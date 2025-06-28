@@ -1,4 +1,4 @@
-#' Create a full ancestral recombination graph (ARG)
+#' A full ancestral recombination graph (ARG)
 #'
 #' Simulate coalescent an recombination events and construct an ARG.
 #' Assume infinite site model.

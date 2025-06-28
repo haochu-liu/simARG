@@ -2,12 +2,12 @@
 % Please edit documentation in R/FSM_mutation.R
 \name{sim_FSM_mutation}
 \alias{sim_FSM_mutation}
-\title{Add mutations to an \code{FSM_ARG} object}
+\title{Add mutations to a \code{FSM_ARG} object}
 \usage{
 sim_FSM_mutation(ARG, theta)
 }
 \arguments{
-\item{ARG}{An \code{FSM_ARG} object.}
+\item{ARG}{A \code{FSM_ARG} object.}
 
 \item{theta}{The mutation rate.}
 }

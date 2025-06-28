@@ -2,7 +2,7 @@
 % Please edit documentation in R/simbac_ARG.R
 \name{simbac_ARG}
 \alias{simbac_ARG}
-\title{Create a full ancestral recombination graph (ARG) using simbac algorithm}
+\title{A full ancestral recombination graph (ARG) using simbac algorithm}
 \usage{
 simbac_ARG(
   n,

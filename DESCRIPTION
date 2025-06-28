@@ -18,3 +18,5 @@ Imports:
     ivs,
     rlang,
     tibble
+Suggests: 
+    ape

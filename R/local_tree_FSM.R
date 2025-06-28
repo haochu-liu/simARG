@@ -1,8 +1,8 @@
 #' Select edges for local tree graph
 #'
-#' Construct a local tree from an `FSM_ARG` object with given site.
+#' Construct a local tree from a `FSM_ARG` object with given site.
 #'
-#' @param ARG An `FSM_ARG` object.
+#' @param ARG A `FSM_ARG` object.
 #' @param location The site location for local tree.
 #' @return `localtree` object; Local tree at a chosen site.
 local_tree_FSM <- function(ARG, location) {

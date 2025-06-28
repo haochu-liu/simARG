@@ -2,7 +2,7 @@
 % Please edit documentation in R/ISM_ARG.R
 \name{ISM_ARG}
 \alias{ISM_ARG}
-\title{Create a full ancestral recombination graph (ARG)}
+\title{A full ancestral recombination graph (ARG)}
 \usage{
 ISM_ARG(n, rho, bacteria = FALSE, delta = NULL)
 }

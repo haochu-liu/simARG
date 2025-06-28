@@ -7,7 +7,7 @@
 local_tree_FSM(ARG, location)
 }
 \arguments{
-\item{ARG}{An \code{FSM_ARG} object.}
+\item{ARG}{A \code{FSM_ARG} object.}
 
 \item{location}{The site location for local tree.}
 }
@@ -15,5 +15,5 @@ local_tree_FSM(ARG, location)
 \code{localtree} object; Local tree at a chosen site.
 }
 \description{
-Construct a local tree from an \code{FSM_ARG} object with given site.
+Construct a local tree from a \code{FSM_ARG} object with given site.
 }

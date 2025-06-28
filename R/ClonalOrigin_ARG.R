@@ -1,4 +1,4 @@
-#' Create an approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm
+#' An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm
 #'
 #' Simulate coalescent an recombination events by ClonalOrigin algorithm.
 #' The non-clonal lineages are not allowed to either recombine or coalesce with each other.

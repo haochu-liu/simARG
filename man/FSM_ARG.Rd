@@ -2,7 +2,7 @@
 % Please edit documentation in R/FSM_ARG.R
 \name{FSM_ARG}
 \alias{FSM_ARG}
-\title{Create a full ancestral recombination graph (ARG)}
+\title{A full ancestral recombination graph (ARG)}
 \usage{
 FSM_ARG(
   n,
