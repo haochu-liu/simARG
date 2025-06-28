@@ -8,7 +8,7 @@
 #' @param L An integer for the number of sites.
 #' @param bacteria logical; If TRUE, genes recombine by conversion.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
-#' @param node_max numeric; Initial maximal node size (default = 1000)
+#' @param node_max numeric; Initial maximal node size (default = 1000).
 #' @param optimise_recomb numeric; If TRUE, skip the recombinations that containing no effective segment.
 #' @param clonal numeric; If TRUE, distinguish clonal lineages.
 #' @param edgemat numeric; If TRUE, return full edge material matrix.
