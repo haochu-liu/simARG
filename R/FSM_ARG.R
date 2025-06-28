@@ -1,26 +1,35 @@
-#' Input: number of leaf lineages, recombination parameter, number of sites
-#' bacteria recombination or not,
-#' if yes, delta is mean of the length of recombinant segment,
-#' initial maximal node size (default = 1000),
-#' optimise recombination edges or not, distinguish clonal lineages or not
-#' Create a full ARG with coalescent and recombination
-#' Edge dataframe: root node, leaf node, edge length, edge material interval
-#' Node dataframe: node index, node height, node material interval
-#' Output: edge dataframe, node dataframe, waiting time for each event,
-#' total time, number of lineages at each event time, number of leaf alleles,
-#' recombination parameter, bacteria recombination or not, and parameter delta
+#' Create a full ancestral recombination graph (ARG)
+#'
+#' Simulate coalescent an recombination events and construct an ARG.
+#' Assume finite site model.
+#'
+#' @param n An integer for the number of leaf lineages.
+#' @param rho The recombination parameter.
+#' @param L An integer for the number of sites.
+#' @param bacteria logical; If TRUE, genes recombine by conversion.
+#' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
+#' @param node_max numeric; Initial maximal node size (default = 1000)
+#' @param optimise_recomb numeric; If TRUE, skip the recombinations that containing no effective segment.
+#' @param clonal numeric; If TRUE, distinguish clonal lineages.
+#' @param edgemat numeric; If TRUE, return full edge material matrix.
+#' @return A list containing matrices of edges and nodes, and other information about ARG.
+#' @export
+#'
+#' @examples
+#' ARG1 <- FSM_ARG(20L, 1, 100L)
+#' ARG2 <- FSM_ARG(5L, 1, 10L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
 FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
                         optimise_recomb=FALSE, clonal=FALSE, edgemat=TRUE) {
-  if (n!=as.integer(n)) {
-    stop("Sample size must be an integer")
-  } else if (L!=as.integer(L)) {
-    stop("Number of sites must be an integer")
+  if (!rlang::is_integer(n, n=1)) {
+    cli::cli_abort("`n` must be a single integer!")
+  } else if (!rlang::is_integer(L, n=1)) {
+    cli::cli_abort("`L` must be a single integer!")
   } else if (bacteria & is.null(delta)) {
-    stop("Must provide parameter for the length of recombinant segment")
+    cli::cli_abort("Must provide parameter delta for gene conversion!")
   } else if (n >= node_max) {
-    stop("Maximal node size must greater than the number of leaf lineages")
+    cli::cli_abort("Maximal node size must greater than the number of leaf lineages!")
   } else if (clonal & (!bacteria)) {
-    stop("Cannot consider clonal lineages for human gene")
+    cli::cli_abort("Cannot consider clonal lineages for human gene!")
   }
 
   k = n
