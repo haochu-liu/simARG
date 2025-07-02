@@ -19,7 +19,7 @@
 #' ARG1 <- FSM_ARG(20L, 1, 100L)
 #' ARG2 <- FSM_ARG(5L, 1, 10L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
 FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
-                        optimise_recomb=FALSE, clonal=FALSE, edgemat=TRUE) {
+                    optimise_recomb=FALSE, clonal=FALSE, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -48,7 +48,7 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
     node_clonal <- NULL
   }
   node_height[1:n] <- 0                            # initialize first n nodes
-  node_mat[1:n, ] <- 1
+  node_mat[1:n, ] <- TRUE
   if (clonal) {node_clonal[1:n] <- TRUE}
 
   # Probability of starting recombination at each site
@@ -79,8 +79,7 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
 
       # append root node
       node_height[node_index] <- t_sum
-      node_mat[node_index, ] <- as.integer(node_mat[leaf_node[1], ] |
-                                             node_mat[leaf_node[2], ])
+      node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
 
       # update clonal lineage
       if (clonal) {
@@ -101,35 +100,35 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
         y <- min(x + rgeom(1, 1/delta), L)
 
         if (clonal & optimise_recomb) {
-          if ((sum(node_mat[leaf_node, x:y])==0 |
-               sum(node_mat[leaf_node, -(x:y)])==0) &
+          if ((!any(node_mat[leaf_node, x:y]) |
+               !any(node_mat[leaf_node, -(x:y)])) &
               (!node_clonal[leaf_node])) {                   # not clonal
             next
-          } else if (sum(node_mat[leaf_node, x:y])==0 &
+          } else if (!any(node_mat[leaf_node, x:y]) &
                      node_clonal[leaf_node]) {               # clonal
             next
           }
         } else if (optimise_recomb) {
-          if (sum(node_mat[leaf_node, x:y])==0 |
-              sum(node_mat[leaf_node, -(x:y)])==0) {next}
+          if (!any(node_mat[leaf_node, x:y]) |
+              !any(node_mat[leaf_node, -(x:y)])) {next}
         }
 
         edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1)
 
-        node_mat[c(node_index, node_index+1), ] <- 0
+        node_mat[c(node_index, node_index+1), ] <- FALSE
         node_mat[node_index, x:y] <- node_mat[leaf_node, x:y]
         node_mat[node_index+1, -(x:y)] <- node_mat[leaf_node, -(x:y)]
       } else {
         x <- which(runif(1) < probstartcum)[1]
 
-        if ((sum(node_mat[leaf_node, 1:(x-1)])==0 |
-             sum(node_mat[leaf_node, x:L])==0) & optimise_recomb) {
+        if ((!any(node_mat[leaf_node, 1:(x-1)]) |
+             !any(node_mat[leaf_node, x:L])) & optimise_recomb) {
           next
         }
 
         edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1)
 
-        node_mat[c(node_index, node_index+1), ] <- 0
+        node_mat[c(node_index, node_index+1), ] <- FALSE
         node_mat[node_index, 1:(x-1)] <- node_mat[leaf_node, 1:(x-1)]
         node_mat[node_index+1, x:L] <- node_mat[leaf_node, x:L]
       }

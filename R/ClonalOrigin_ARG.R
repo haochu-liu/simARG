@@ -90,7 +90,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       x <- which(runif(1) < probstartcum)[1]
       y <- min(x + rgeom(1, 1/delta), L)
 
-      if (optimise_recomb & (sum(node_mat[leaf_node, x:y])==0)) {next}
+      if (optimise_recomb & !any(node_mat[leaf_node, x:y])) {next}
 
       edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1)
 

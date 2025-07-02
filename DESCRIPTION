@@ -16,6 +16,7 @@ Imports:
     dplyr,
     igraph,
     ivs,
+    Matrix,
     rlang,
     tibble
 Suggests: 
