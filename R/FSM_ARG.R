@@ -174,6 +174,7 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
                bacteria=bacteria, delta=delta)
   } else {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
+               edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],

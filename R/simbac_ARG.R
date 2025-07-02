@@ -219,6 +219,7 @@ simbac_ARG <- function(n, rho, L, delta, node_max=1000, output_eff_R=FALSE,
                delta=delta)
   } else if (output_eff_R) {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
+               edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
@@ -226,6 +227,7 @@ simbac_ARG <- function(n, rho, L, delta, node_max=1000, output_eff_R=FALSE,
                node_probstart=node_probstart[1:(node_index-1), ])
   } else {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
+               edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
