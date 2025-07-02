@@ -10,7 +10,7 @@
 #' @examples
 #' ARG <- FSM_ARG(20L, 1, 100L)
 #' ARG_mutation <- ISM_mutation(ARG, 2)
-sim_FSM_mutation <- function(ARG, theta) {
+FSM_mutation <- function(ARG, theta) {
   if (!inherits(ARG, "sim_FSM_ARG")) {
     stop("Object must be of class 'sim_FSM_ARG'")
   }
