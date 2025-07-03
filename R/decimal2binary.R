@@ -5,7 +5,7 @@
 #' @param x A integer vector.
 #' @param n An integer.
 #' @return A boolean vector of binary numbers.
-decimal_to_binary <- function(x, n) {
+decimal2binary <- function(x, n) {
   if (!rlang::is_integer(n)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(x)) {

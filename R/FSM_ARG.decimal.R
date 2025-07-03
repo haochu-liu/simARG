@@ -81,10 +81,10 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
       # append root node
       node_height[node_index] <- t_sum
       # node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
-      node_mat_b1 <- decimal_to_binary(node_mat[leaf_node[1], ], 20L)
-      node_mat_b2 <- decimal_to_binary(node_mat[leaf_node[2], ], 20L)
+      node_mat_b1 <- decimal2binary(node_mat[leaf_node[1], ], 20L)
+      node_mat_b2 <- decimal2binary(node_mat[leaf_node[2], ], 20L)
       node_mat_b3 <- node_mat_b1 | node_mat_b2
-      node_mat[node_index, ] <- binary_to_decimal(node_mat_b3, 20L)
+      node_mat[node_index, ] <- binary2decimal(node_mat_b3, 20L)
 
       # update clonal lineage
       if (clonal) {
@@ -99,7 +99,7 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
     } else {
       # recombination event
       leaf_node <- sample(pool, size=1, replace=FALSE)
-      node_mat_b1 <- decimal_to_binary(node_mat[leaf_node, ], 20L)
+      node_mat_b1 <- decimal2binary(node_mat[leaf_node, ], 20L)
 
       if (bacteria) {
         x <- which(runif(1) < probstartcum)[1]
@@ -151,8 +151,8 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
       node_height[c(node_index, node_index+1)] <- t_sum
 
       # update decimal node matrix
-      node_mat[node_index, ] <- binary_to_decimal(node_mat_b2, 20L)
-      node_mat[node_index+1, ] <- binary_to_decimal(node_mat_b3, 20L)
+      node_mat[node_index, ] <- binary2decimal(node_mat_b2, 20L)
+      node_mat[node_index+1, ] <- binary2decimal(node_mat_b3, 20L)
 
       # update clonal lineage
       if (clonal) {

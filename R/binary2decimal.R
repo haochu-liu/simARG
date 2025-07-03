@@ -5,7 +5,7 @@
 #' @param x A boolean vector.
 #' @param n An integer that devides the length of `x`.
 #' @return A vector of decimal numbers.
-binary_to_decimal <- function(x, n) {
+binary2decimal <- function(x, n) {
   if (!rlang::is_integer(n)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_logical(x)) {
