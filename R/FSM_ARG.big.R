@@ -1,7 +1,7 @@
 #' A full ancestral recombination graph (ARG)
 #'
 #' Simulate coalescent an recombination events and construct an ARG.
-#' Assume finite site model.
+#' Assume finite site model. Return a `big.matrix` for ancestral material.
 #'
 #' @param n An integer for the number of leaf lineages.
 #' @param rho The recombination parameter.

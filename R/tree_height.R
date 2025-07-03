@@ -6,7 +6,7 @@
 #' @return Tree height.
 tree_height <- function(tree) {
   if (!inherits(tree, "localtree")) {
-    stop("Object must be of class 'localtree'")
+    cli::cli_abort("Object must be of class `localtree`")
   }
 
   # provide the height (time to MRCA) of the tree

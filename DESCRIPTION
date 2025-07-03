@@ -20,5 +20,4 @@ Imports:
     rlang,
     tibble
 Suggests: 
-    ape,
-    bigmemory
+    ape

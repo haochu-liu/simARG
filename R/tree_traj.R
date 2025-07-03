@@ -7,7 +7,7 @@
 #' @return A vector of edge indices for trajectory.
 tree_traj <- function(child, tree) {
   if (!inherits(tree, "localtree")) {
-    stop("Object must be of class 'localtree'")
+    cli::cli_abort("Object must be of class `localtree`")
   }
 
   trajectory <- c(child)
