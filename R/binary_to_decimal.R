@@ -18,7 +18,7 @@ binary_to_decimal <- function(x, n) {
 
   num_groups <- length(x) / n
 
-  decimal_x <- numeric(num_groups)
+  decimal_x <- integer(num_groups)
 
   for (i in 1:num_groups) {
     start_index <- (i - 1) * n + 1
