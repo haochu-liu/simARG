@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{decimal2binary_cpp}
 \alias{decimal2binary_cpp}
-\title{Convert decimal rows to binary rows}
+\title{Convert decimal rows to binary rows (Rcpp version)}
 \usage{
 decimal2binary_cpp(x, n, n_last)
 }

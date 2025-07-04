@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 
-//' Convert decimal rows to binary rows
+//' Convert decimal rows to binary rows (Rcpp version)
 //'
 //' Convert every decimal number to `n` binary elements.
 //'
