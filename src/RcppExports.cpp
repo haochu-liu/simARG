@@ -10,6 +10,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// binary2decimal_cpp
+IntegerVector binary2decimal_cpp(LogicalVector x, int n, int n_last);
+RcppExport SEXP _simARG_binary2decimal_cpp(SEXP xSEXP, SEXP nSEXP, SEXP n_lastSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type n_last(n_lastSEXP);
+    rcpp_result_gen = Rcpp::wrap(binary2decimal_cpp(x, n, n_last));
+    return rcpp_result_gen;
+END_RCPP
+}
 // decimal2binary_cpp
 LogicalVector decimal2binary_cpp(IntegerVector x, int n, int n_last);
 RcppExport SEXP _simARG_decimal2binary_cpp(SEXP xSEXP, SEXP nSEXP, SEXP n_lastSEXP) {
@@ -25,6 +38,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_simARG_binary2decimal_cpp", (DL_FUNC) &_simARG_binary2decimal_cpp, 3},
     {"_simARG_decimal2binary_cpp", (DL_FUNC) &_simARG_decimal2binary_cpp, 3},
     {NULL, NULL, 0}
 };

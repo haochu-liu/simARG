@@ -14,6 +14,8 @@ using namespace Rcpp;
 LogicalVector decimal2binary_cpp(IntegerVector x, int n, int n_last) {
   if (n > 30) {
     Rcpp::stop("`n` must be smaller than 31.");
+  } else if (n_last > n) {
+    Rcpp::stop("`n_last` cannot be greater than `n`!");
   }
 
   int binary_x_length = (x.length()-1) * n + n_last;
