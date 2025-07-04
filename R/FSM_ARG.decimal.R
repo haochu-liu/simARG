@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' ARG1 <- FSM_ARG.decimal(20L, 1, 100L)
-#' ARG2 <- FSM_ARG.decimal(5L, 1, 200L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
+#' ARG2 <- FSM_ARG.decimal(5L, 1, 200L, bacteria = TRUE, delta = 10, optimise_recomb = TRUE, clonal = TRUE)
 FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
                             optimise_recomb=FALSE, clonal=FALSE) {
   if (!rlang::is_integer(n, n=1)) {
@@ -29,8 +29,6 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
     cli::cli_abort("Maximal node size must greater than the number of leaf lineages!")
   } else if (clonal & (!bacteria)) {
     cli::cli_abort("Cannot consider clonal lineages for human gene!")
-  } else if (L < 20) {
-    cli::cli_abort("`L` needs to be greater or equal to 20!")
   }
 
   k = n
@@ -38,18 +36,20 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
   t <- vector("numeric", length = 0) # vector of event times
   t_sum <- 0
 
-  edge_matrix <- matrix(NA, nrow=node_max, ncol=3) # root and leaf nodes, length
+  edge_matrix <- matrix(NA, nrow=node_max, ncol=3)     # root and leaf nodes, length
   colnames(edge_matrix) <- c("node1", "node2", "length")
-  edge_mat_index <- rep(NA, node_max)              # edge material index
-  node_height <- rep(NA, node_max)                 # node height to recent time
-  node_mat <- matrix(NA, nrow=node_max, ncol=L/20)    # node material
-  if (clonal) {                                    # node clonal
+  edge_mat_index <- rep(NA, node_max)                  # edge material index
+  node_height <- rep(NA, node_max)                     # node height to recent time
+  node_mat <- matrix(NA, nrow=node_max, ncol=L%/%30+1) # node material
+  if (clonal) {                                        # node clonal
     node_clonal <- rep(NA, node_max)
   } else {
     node_clonal <- NULL
   }
   node_height[1:n] <- 0                            # initialize first n nodes
-  node_mat[1:n, ] <- as.integer(sum(2^(0:19)))
+  node_mat_col_last <- as.integer(L %% 30)
+  node_mat[1:n, ] <- as.integer(sum(2^(0:29)))
+  node_mat[1:n, L%/%30+1] <- as.integer(sum(2^(0:(node_mat_col_last-1))))
   if (clonal) {node_clonal[1:n] <- TRUE}
 
   # Probability of starting recombination at each site
@@ -81,10 +81,10 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
       # append root node
       node_height[node_index] <- t_sum
       # node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
-      node_mat_b1 <- decimal2binary(node_mat[leaf_node[1], ], 20L)
-      node_mat_b2 <- decimal2binary(node_mat[leaf_node[2], ], 20L)
+      node_mat_b1 <- decimal2binary_cpp(node_mat[leaf_node[1], ], 30L, node_mat_col_last)
+      node_mat_b2 <- decimal2binary_cpp(node_mat[leaf_node[2], ], 30L, node_mat_col_last)
       node_mat_b3 <- node_mat_b1 | node_mat_b2
-      node_mat[node_index, ] <- binary2decimal(node_mat_b3, 20L)
+      node_mat[node_index, ] <- binary2decimal_cpp(node_mat_b3, 30L, node_mat_col_last)
 
       # update clonal lineage
       if (clonal) {
@@ -99,7 +99,7 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
     } else {
       # recombination event
       leaf_node <- sample(pool, size=1, replace=FALSE)
-      node_mat_b1 <- decimal2binary(node_mat[leaf_node, ], 20L)
+      node_mat_b1 <- decimal2binary_cpp(node_mat[leaf_node, ], 30L, node_mat_col_last)
 
       if (bacteria) {
         x <- which(runif(1) < probstartcum)[1]
@@ -151,8 +151,8 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
       node_height[c(node_index, node_index+1)] <- t_sum
 
       # update decimal node matrix
-      node_mat[node_index, ] <- binary2decimal(node_mat_b2, 20L)
-      node_mat[node_index+1, ] <- binary2decimal(node_mat_b3, 20L)
+      node_mat[node_index, ] <- binary2decimal_cpp(node_mat_b2, 30L, node_mat_col_last)
+      node_mat[node_index+1, ] <- binary2decimal_cpp(node_mat_b3, 30L, node_mat_col_last)
 
       # update clonal lineage
       if (clonal) {
@@ -172,7 +172,7 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
       edge_matrix <- rbind(edge_matrix, matrix(NA, nrow=node_max, ncol=3))
       edge_mat_index <- c(edge_mat_index, rep(NA, node_max))
       node_height <- c(node_height, rep(NA, node_max))
-      node_mat <- rbind(node_mat, matrix(NA, nrow=node_max, ncol=L/20))
+      node_mat <- rbind(node_mat, matrix(NA, nrow=node_max, ncol=L%/%30+1))
       if (clonal) {node_clonal <- c(node_clonal, rep(NA, node_max))}
       node_max <- 2 * node_max
     }
