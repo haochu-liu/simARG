@@ -106,7 +106,7 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
   for (i in 1:n_recomb) {
     # simulate b_height
     recomb_edge[i, 2] <- runif(1, max=clonal_edge[recomb_edge[i, 1], 3]) +
-                         clonal_node_height[clonal_edge[recomb_edge[i, 1], 1]]
+                         clonal_node_height[clonal_edge[recomb_edge[i, 1], 2]]
     # identify a_height
     t_above_b <- clonal_node_height[n:(2*n-1)] - recomb_edge[i, 2]
     i_above_b <- c(0, t_above_b[t_above_b >= 0])
@@ -122,33 +122,41 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
     }
     # simulate a_edge
     if (num_lineage > 1) {
-      print(which(recomb_edge[i, 4] < clonal_node_height)[1] == (2*n+1-num_lineage))
-      pool_edge <- which((clonal_edge[, 2] >= (2*n+1-num_lineage)) &
-                         (clonal_edge[, 1] < (2*n+1-num_lineage)))
+      # print(which(recomb_edge[i, 4] < clonal_node_height)[1] == (2*n+1-num_lineage))
+      pool_edge <- which((clonal_edge[, 1] >= (2*n+1-num_lineage)) &
+                         (clonal_edge[, 2] < (2*n+1-num_lineage)))
       recomb_edge[i, 3] <- sample(pool_edge, 1, replace=TRUE)
     }
   }
 
-  # reorder and backwards in time
+  # Initialize output variables
+  t_sum <- max(t_sum, recomb_edge[, 4])
+  clonal_edge <- rbind(clonal_edge, matrix(NA, nrow=2*n_recomb, ncol=3))
+  node_mat <- matrix(NA, nrow=(2*n_recomb+2*n-1), ncol=L)
+  edge_mat_index <- c(clonal_edge[, 2], rep(NA, 2*n_recomb))
+  node_clonal <- c(rep(TRUE, 2*n-1), rep(NA, 2*n_recomb))
+
+  # rearrange and backwards in time
+  for (i in 1:n_recomb){
+
+  }
 
 
 
   if (edgemat) {
-    ARG = list(edge=edge_matrix[1:(edge_index-1), ],
-               edge_mat=node_mat[edge_mat_index[1:(edge_index-1)], ],
-               node_height=node_height[1:(node_index-1)],
-               node_mat=node_mat[1:(node_index-1), ],
-               node_clonal=node_clonal[1:(node_index-1)],
-               waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
-               delta=delta)
+    ARG = list(edge=,
+               edge_mat=,
+               node_height=,
+               node_mat=,
+               node_clonal=,
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   } else {
-    ARG = list(edge=edge_matrix[1:(edge_index-1), ],
-               edge_mat_index=edge_mat_index[1:(edge_index-1)],
-               node_height=node_height[1:(node_index-1)],
-               node_mat=node_mat[1:(node_index-1), ],
-               node_clonal=node_clonal[1:(node_index-1)],
-               waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
-               delta=delta)
+    ARG = list(edge=,
+               edge_mat_index=,
+               node_height=,
+               node_mat=,
+               node_clonal=,
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   }
   class(ARG) <- "FSM_ARG"
   return(ARG)
