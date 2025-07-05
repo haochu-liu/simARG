@@ -129,15 +129,22 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
     }
   }
 
+  # delete rows when having same in and out nodes
+  same_in_out <- which(recomb_edge[, 1] == recomb_edge[, 3])
+  if (length(same_in_out)) {
+    recomb_edge <- recomb_edge[-same_in_out, ]
+    n_recomb <- nrow(recomb_edge)
+  }
+
   # Initialize output variables
   t_sum <- max(t_sum, recomb_edge[, 4])
-  clonal_edge <- rbind(clonal_edge, matrix(NA, nrow=2*n_recomb, ncol=3))
-  node_mat <- matrix(NA, nrow=(2*n_recomb+2*n-1), ncol=L)
-  edge_mat_index <- c(clonal_edge[, 2], rep(NA, 2*n_recomb))
-  node_clonal <- c(rep(TRUE, 2*n-1), rep(NA, 2*n_recomb))
+  edge_matrix <- matrix(NA, nrow=(2*(n-1)+4*n_recomb), ncol=3)
+  node_mat <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=L)
+  edge_mat_index <- rep(NA, 2*(n-1)+4*n_recomb)
+  node_clonal <- rep(NA, 3*n_recomb+2*n-1)
 
   # rearrange and backwards in time
-  for (i in 1:n_recomb){
+  for (i in 1:(2*(n-1))){
 
   }
 
