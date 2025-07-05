@@ -7,7 +7,6 @@
 #' @param rho The recombination parameter.
 #' @param L An integer for the number of sites.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
-#' @param node_max numeric; Initial maximal node size (default = 1000).
 #' @param optimise_recomb numeric; If TRUE, skip the recombinations that containing no effective segment.
 #' @param edgemat numeric; If TRUE, return full edge material matrix.
 #' @return A list containing matrices of edges and nodes, and other information about ARG.
@@ -16,7 +15,7 @@
 #' @examples
 #' ARG1 <- ClonalOrigin_treetoARG(100L, 5, 100L, 5)
 #' ARG2 <- ClonalOrigin_treetoARG(5L, 1, 10L, 1, optimise_recomb=TRUE)
-ClonalOrigin_treetoARG <- function(n, rho, L, delta, node_max=1000,
+ClonalOrigin_treetoARG <- function(n, rho, L, delta,
                                    optimise_recomb=FALSE, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
@@ -29,6 +28,7 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, node_max=1000,
   k = n
   t_sum <- 0
 
+  # Initialize varables for clonal tree
   clonal_edge <- matrix(NA, nrow=2*(n-1), ncol=3) # root and leaf nodes, length
   colnames(clonal_edge) <- c("node1", "node2", "length")
   clonal_node_height <- rep(NA, 2*n-1)            # node height to recent time
@@ -42,7 +42,7 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, node_max=1000,
   # clonal tree by coalescent only
   while (k > 1) {
     # sample a new event time
-    event_time <- rexp(1, rate=k*(k-1+rho)/2)
+    event_time <- rexp(1, rate=k*(k-1)/2)
     t_sum <- t_sum + event_time
     # coalescent event
     leaf_node <- sample(pool, size=2, replace=FALSE)
@@ -63,8 +63,75 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, node_max=1000,
   }
 
   # number of recombination edges
-  l <- sum(clonal_edge[, 3])
-  n_recomb <- rpois(1, rho*l/2) # num of recombs | l ~ Poisson(rho*l/2)
+  tree_length <- sum(clonal_edge[, 3])
+  # num of recombs | tree_length ~ Poisson(rho*l/2)
+  n_recomb <- rpois(1, rho*tree_length/2)
+
+  # stop when there is no recombination
+  if (n_recomb == 0) {
+    if (edgemat) {
+      ARG = list(edge=clonal_edge,
+                 edge_mat=matrix(1, nrow=nrow(clonal_edge), ncol=L),
+                 node_height=clonal_node_height,
+                 node_mat=matrix(1, nrow=length(clonal_node_height), ncol=L),
+                 node_clonal=rep(TRUE, length(clonal_node_height)),
+                 sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
+    } else {
+      ARG = list(edge=clonal_edge,
+                 edge_mat_index=clonal_edge[1, ],
+                 node_height=clonal_node_height,
+                 node_mat=matrix(1, nrow=length(clonal_node_height), ncol=L),
+                 node_clonal=rep(TRUE, length(clonal_node_height)),
+                 sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
+    }
+    class(ARG) <- "FSM_ARG"
+    return(ARG)
+  }
+
+  # Initialize recombination edges
+  recomb_edge <- matrix(NA, nrow=n_recomb, ncol=6) # matrix for b, a, x, y
+  colnames(recomb_edge) <- c("b_edge", "b_height",
+                             "a_edge", "a_height",
+                             "x", "y")
+  probstartcum <- cumsum(rep(1/L, L))
+  a_rexp <- rexp(n_recomb, rate=1)
+
+  # simulate b_edge (similar to mutation)
+  recomb_edge[1, ] <- sample(1:(2*(n-1)), n_recomb,
+                             replace=TRUE, prob=clonal_edge[, 3])
+
+  # simulate x and y
+  recomb_edge[5, ] <- findInterval(runif(n_recomb), probstartcum) + 1
+  recomb_edge[6, ] <- pmin(recomb_edge[5, ] + rgeom(n_recomb, 1/delta), L)
+  for (i in 1:n_recomb) {
+    # simulate b_height
+    recomb_edge[2, i] <- runif(1, max=clonal_edge[recomb_edge[1, i], 3]) +
+                         clonal_node_height[clonal_edge[recomb_edge[1, i], 1]]
+    # identify a_height
+    t_above_b <- clonal_node_height[n:(2*n-1)] - recomb_edge[2, i]
+    i_above_b <- c(0, t_above_b[t_above_b >= 0])
+    i_above_b <- i_above_b[2:length(i_above_b)] - i_above_b[1:(length(i_above_b)-1)]
+    cuml_above_b <- cumsum(i_above_b * (1+length(i_above_b)):2)
+    num_lineage <- (1+length(i_above_b)) - length(which(a_rexp[i] > cuml_above_b))
+    if (num_lineage == (1+length(i_above_b))) {
+      recomb_edge[4, i] <- a_rexp[i] + recomb_edge[2, i]
+    } else {
+      recomb_edge[4, i] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
+                           sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
+                           recomb_edge[2, i]
+    }
+    # simulate a_edge
+    if (num_lineage > 1) {
+      print(which(recomb_edge[4, i] < clonal_node_height)[1] == (2*n+1-num_lineage))
+      pool_edge <- which((clonal_edge[, 2] >= (2*n+1-num_lineage)) &
+                         (clonal_edge[, 1] < (2*n+1-num_lineage)))
+      recomb_edge[3, i] <- sample(pool_edge, 1, replace=TRUE)
+    }
+  }
+
+  # reorder and backwards in time
+
+
 
   if (edgemat) {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],

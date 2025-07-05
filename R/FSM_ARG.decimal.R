@@ -46,7 +46,7 @@ FSM_ARG.decimal <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000
   } else {
     node_clonal <- NULL
   }
-  node_height[1:n] <- 0                            # initialize first n nodes
+  node_height[1:n] <- 0                                # initialize first n nodes
   node_mat_col_last <- as.integer(L %% 30)
   node_mat[1:n, ] <- as.integer(sum(2^(0:29)))
   node_mat[1:n, L%/%30+1] <- as.integer(sum(2^(0:(node_mat_col_last-1))))
