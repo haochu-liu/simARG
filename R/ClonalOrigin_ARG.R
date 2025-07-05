@@ -134,16 +134,14 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
-               delta=delta)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   } else {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
                edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               waiting_time=t, sum_time=t_sum, k=k_vector, n=n, rho=rho, L=L,
-               delta=delta)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   }
   class(ARG) <- "FSM_ARG"
   return(ARG)

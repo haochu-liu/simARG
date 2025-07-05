@@ -97,35 +97,35 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
   a_rexp <- rexp(n_recomb, rate=1)
 
   # simulate b_edge (similar to mutation)
-  recomb_edge[1, ] <- sample(1:(2*(n-1)), n_recomb,
+  recomb_edge[, 1] <- sample(1:(2*(n-1)), n_recomb,
                              replace=TRUE, prob=clonal_edge[, 3])
 
   # simulate x and y
-  recomb_edge[5, ] <- findInterval(runif(n_recomb), probstartcum) + 1
-  recomb_edge[6, ] <- pmin(recomb_edge[5, ] + rgeom(n_recomb, 1/delta), L)
+  recomb_edge[, 5] <- findInterval(runif(n_recomb), probstartcum) + 1
+  recomb_edge[, 6] <- pmin(recomb_edge[, 5] + rgeom(n_recomb, 1/delta), L)
   for (i in 1:n_recomb) {
     # simulate b_height
-    recomb_edge[2, i] <- runif(1, max=clonal_edge[recomb_edge[1, i], 3]) +
-                         clonal_node_height[clonal_edge[recomb_edge[1, i], 1]]
+    recomb_edge[i, 2] <- runif(1, max=clonal_edge[recomb_edge[i, 1], 3]) +
+                         clonal_node_height[clonal_edge[recomb_edge[i, 1], 1]]
     # identify a_height
-    t_above_b <- clonal_node_height[n:(2*n-1)] - recomb_edge[2, i]
+    t_above_b <- clonal_node_height[n:(2*n-1)] - recomb_edge[i, 2]
     i_above_b <- c(0, t_above_b[t_above_b >= 0])
     i_above_b <- i_above_b[2:length(i_above_b)] - i_above_b[1:(length(i_above_b)-1)]
     cuml_above_b <- cumsum(i_above_b * (1+length(i_above_b)):2)
     num_lineage <- (1+length(i_above_b)) - length(which(a_rexp[i] > cuml_above_b))
     if (num_lineage == (1+length(i_above_b))) {
-      recomb_edge[4, i] <- a_rexp[i] + recomb_edge[2, i]
+      recomb_edge[i, 4] <- a_rexp[i] + recomb_edge[i, 2]
     } else {
-      recomb_edge[4, i] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
+      recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
                            sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
-                           recomb_edge[2, i]
+                           recomb_edge[i, 2]
     }
     # simulate a_edge
     if (num_lineage > 1) {
-      print(which(recomb_edge[4, i] < clonal_node_height)[1] == (2*n+1-num_lineage))
+      print(which(recomb_edge[i, 4] < clonal_node_height)[1] == (2*n+1-num_lineage))
       pool_edge <- which((clonal_edge[, 2] >= (2*n+1-num_lineage)) &
                          (clonal_edge[, 1] < (2*n+1-num_lineage)))
-      recomb_edge[3, i] <- sample(pool_edge, 1, replace=TRUE)
+      recomb_edge[i, 3] <- sample(pool_edge, 1, replace=TRUE)
     }
   }
 
