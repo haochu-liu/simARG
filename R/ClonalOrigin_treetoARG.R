@@ -7,7 +7,6 @@
 #' @param rho The recombination parameter.
 #' @param L An integer for the number of sites.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
-#' @param optimise_recomb numeric; If TRUE, skip the recombinations that containing no effective segment.
 #' @param edgemat numeric; If TRUE, return full edge material matrix.
 #' @return A list containing matrices of edges and nodes, and other information about ARG.
 #' @export
@@ -20,8 +19,6 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, edgemat=TRUE) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
     cli::cli_abort("`L` must be a single integer!")
-  } else if (n >= node_max) {
-    cli::cli_abort("Maximal node size must greater than the number of leaf lineages!")
   }
 
   k = n
@@ -179,13 +176,13 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, edgemat=TRUE) {
     nodes_in_edge <- c(which(node_info[, 3]==0 & node_info[, 4]==clonal_edge[i, 2]),
                        recomb_nodes,
                        which(node_info[, 3]==0 & node_info[, 4]==clonal_edge[i, 1]))
-    for (i in 2:length(nodes_in_edge)){
-      if ((!node_info[nodes_in_edge[i], 2]) & node_info[nodes_in_edge[i], 3]) {
+    for (j in 2:length(nodes_in_edge)){
+      if ((!node_info[nodes_in_edge[j], 2]) & node_info[nodes_in_edge[j], 3]) {
         # recombination case
-        leaf_node <- node_info[nodes_in_edge[i-1], 5]
-        x <- recomb_edge[node_info[nodes_in_edge[i], 4], 5]
-        y <- recomb_edge[node_info[nodes_in_edge[i], 4], 6]
-        node_info[c(nodes_in_edge[i]-1, nodes_in_edge[i]), 5] <- c(node_index, node_index+1L)
+        leaf_node <- node_info[nodes_in_edge[j-1], 5]
+        x <- recomb_edge[node_info[nodes_in_edge[j], 4], 5]
+        y <- recomb_edge[node_info[nodes_in_edge[j], 4], 6]
+        node_info[c(nodes_in_edge[j]-1, nodes_in_edge[j]), 5] <- c(node_index, node_index+1L)
 
         node_mat[c(node_index, node_index+1), ] <- FALSE
         node_mat[node_index+1, x:y] <- node_mat[leaf_node, x:y]
@@ -194,32 +191,93 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta, edgemat=TRUE) {
         edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1L)
         edge_matrix[c(edge_index, edge_index+1), 1] <- c(node_index, node_index+1L)
         edge_matrix[c(edge_index, edge_index+1), 2] <- leaf_node
-        edge_matrix[c(edge_index, edge_index+1), 3] <- node_info[nodes_in_edge[i], 1] -
-                                                       node_info[nodes_in_edge[i-1], 1]
+        edge_matrix[c(edge_index, edge_index+1), 3] <- node_info[nodes_in_edge[j], 1] -
+                                                       node_info[nodes_in_edge[j-1], 1]
         node_index <- node_index + 2L
-        edge_index <- edge_index + 1L
-      } else if (node_info[nodes_in_edge[i], 2] & node_info[nodes_in_edge[i], 3]) {
+        edge_index <- edge_index + 2L
+      } else if (node_info[nodes_in_edge[j], 2] & node_info[nodes_in_edge[j], 3]) {
         # coalescence (income recombination edge)
+        recomb_leaf_index <- which(node_info[, 3]==0 & node_info[, 4]==node_info[nodes_in_edge[j], 4])
+        leaf_node <- c(node_info[nodes_in_edge[j-1], 5],
+                       node_info[recomb_leaf_index, 5])
+        node_info[nodes_in_edge[j], 5] <- node_index
 
+        node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
+
+        edge_mat_index[c(edge_index, edge_index+1)] <- leaf_node
+        edge_matrix[c(edge_index, edge_index+1), 1] <- node_index
+        edge_matrix[c(edge_index, edge_index+1), 2] <- leaf_node
+        edge_matrix[edge_index, 3] <- node_info[nodes_in_edge[j], 1] -
+                                      node_info[nodes_in_edge[j-1], 1]
+        edge_matrix[edge_index+1, 3] <- node_info[nodes_in_edge[j], 1] -
+                                        node_info[recomb_leaf_index, 1]
+
+        node_index <- node_index + 1L
+        edge_index <- edge_index + 2L
+      } else {
+        # coalescence
+        leaf_node <- c(node_info[nodes_in_edge[j-1], 5])
+        if (is.na(node_info[nodes_in_edge[j], 5])) {
+          node_info[nodes_in_edge[j], 5] <- node_index
+        }
+
+        node_mat[node_info[nodes_in_edge[j], 5], ] <- node_mat[leaf_node, ]
+
+        edge_mat_index[edge_index] <- leaf_node
+        edge_matrix[edge_index, 1] <- node_info[nodes_in_edge[j], 5]
+        edge_matrix[edge_index, 2] <- leaf_node
+        edge_matrix[edge_index, 3] <- node_info[nodes_in_edge[j], 1] -
+          node_info[nodes_in_edge[j-1], 1]
+
+        node_index <- node_index + 1L
+        edge_index <- edge_index + 1L
       }
+    }
+  }
+  # for edge above clonal root
+  recomb_nodes <- which(node_info[, 3]==-1)
+  if (length(recomb_nodes)) {
+    nodes_in_edge <- c(which(node_info[, 3]==0 & node_info[, 4]==clonal_edge[2*(n-1), 1]),
+                       recomb_nodes)
+    for (j in 2:length(nodes_in_edge)){
+      # coalescence (income recombination edge)
+      recomb_leaf_index <- which(node_info[, 3]==0 & node_info[, 4]==node_info[nodes_in_edge[j], 4])
+      leaf_node <- c(node_info[nodes_in_edge[j-1], 5],
+                     node_info[recomb_leaf_index, 5])
+      node_info[nodes_in_edge[j], 5] <- node_index
+
+      node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
+
+      edge_mat_index[c(edge_index, edge_index+1)] <- leaf_node
+      edge_matrix[c(edge_index, edge_index+1), 1] <- node_index
+      edge_matrix[c(edge_index, edge_index+1), 2] <- leaf_node
+      edge_matrix[edge_index, 3] <- node_info[nodes_in_edge[j], 1] -
+        node_info[nodes_in_edge[j-1], 1]
+      edge_matrix[edge_index+1, 3] <- node_info[nodes_in_edge[j], 1] -
+        node_info[recomb_leaf_index, 1]
+
+      node_index <- node_index + 1L
+      edge_index <- edge_index + 2L
+
     }
   }
 
 
 
+
   if (edgemat) {
-    ARG = list(edge=,
-               edge_mat=,
-               node_height=,
-               node_mat=,
-               node_clonal=,
+    ARG = list(edge=edge_matrix,
+               edge_mat=node_mat[edge_mat_index, ],
+               node_height=node_info[1, ],
+               node_mat=node_mat,
+               node_clonal=node_info[2, ],
                sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   } else {
-    ARG = list(edge=,
-               edge_mat_index=,
-               node_height=,
-               node_mat=,
-               node_clonal=,
+    ARG = list(edge=edge_matrix,
+               edge_mat_index=edge_mat_index,
+               node_height=node_info[1, ],
+               node_mat=node_mat,
+               node_clonal=node_info[2, ],
                sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   }
   class(ARG) <- "FSM_ARG"

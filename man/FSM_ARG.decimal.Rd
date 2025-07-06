@@ -41,5 +41,5 @@ Assume finite site model.
 }
 \examples{
 ARG1 <- FSM_ARG.decimal(20L, 1, 100L)
-ARG2 <- FSM_ARG.decimal(5L, 1, 200L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
+ARG2 <- FSM_ARG.decimal(5L, 1, 200L, bacteria = TRUE, delta = 10, optimise_recomb = TRUE, clonal = TRUE)
 }
