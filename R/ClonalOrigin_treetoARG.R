@@ -14,9 +14,8 @@
 #'
 #' @examples
 #' ARG1 <- ClonalOrigin_treetoARG(100L, 5, 100L, 5)
-#' ARG2 <- ClonalOrigin_treetoARG(5L, 1, 10L, 1, optimise_recomb=TRUE)
-ClonalOrigin_treetoARG <- function(n, rho, L, delta,
-                                   optimise_recomb=FALSE, edgemat=TRUE) {
+#' ARG2 <- ClonalOrigin_treetoARG(5L, 1, 10L, 1, edgemat=FALSE)
+ClonalOrigin_treetoARG <- function(n, rho, L, delta, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -126,6 +125,8 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
       pool_edge <- which((clonal_edge[, 1] >= (2*n+1-num_lineage)) &
                          (clonal_edge[, 2] < (2*n+1-num_lineage)))
       recomb_edge[i, 3] <- sample(pool_edge, 1, replace=TRUE)
+    } else {
+      recomb_edge[i, 3] <- -1
     }
   }
 
@@ -137,26 +138,71 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
   }
 
   # Initialize output variables
-  t_sum <- max(t_sum, recomb_edge[, 4])
   edge_matrix <- matrix(NA, nrow=(2*(n-1)+4*n_recomb), ncol=3)
   node_mat <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=L)
   edge_mat_index <- rep(NA, 2*(n-1)+4*n_recomb)
-  node_info <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=4)
-  colnames(node_info) <- c("height", "clonal", "recomb_edge", "index")
+  node_info <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=5)
+  colnames(node_info) <- c("height", "clonal", "recomb_edge", "index", "new_index")
+  node_mat[1:n, ] <- TRUE
 
   # Organize node information
   # nodes from clonal tree
   node_info[1:(2*n-1), 1] <- clonal_node_height
   node_info[1:(2*n-1), 2] <- TRUE
+  node_info[1:(2*n-1), 3] <- FALSE
   node_info[1:(2*n-1), 4] <- 1:(2*n-1)
+  node_info[1:n, 5] <- 1:n
   # nodes from recombination edges
-  node_info[(2*n):(2*n+n_recomb-1), 1] <-
-
-
+  # b1
+  node_info[(2*n):(2*n+n_recomb-1), 1] <- recomb_edge[, 2]
+  node_info[(2*n):(2*n+n_recomb-1), 2] <- TRUE
+  # b2
+  node_info[(2*n+n_recomb):(2*n+2*n_recomb-1), 1] <- recomb_edge[, 2]
+  node_info[(2*n+n_recomb):(2*n+2*n_recomb-1), 2] <- FALSE
+  node_info[(2*n+n_recomb):(2*n+2*n_recomb-1), 3] <- recomb_edge[, 1]
+  node_info[(2*n+n_recomb):(2*n+2*n_recomb-1), 4] <- 1:n_recomb
+  # a
+  node_info[(2*n+2*n_recomb):(2*n+3*n_recomb-1), 1] <- recomb_edge[, 4]
+  node_info[(2*n+2*n_recomb):(2*n+3*n_recomb-1), 2] <- TRUE
+  node_info[(2*n+2*n_recomb):(2*n+3*n_recomb-1), 3] <- recomb_edge[, 3]
+  node_info[(2*n+2*n_recomb):(2*n+3*n_recomb-1), 4] <- 1:n_recomb
+  # reorder
+  t_sum <- max(node_info[, 1])
+  node_info <- node_info[order(node_info[, 1]), ]
 
   # rearrange and backwards in time
+  node_index <- as.integer(n+1)
+  edge_index <- 1L
+  # for every edge on clonal tree
   for (i in 1:(2*(n-1))){
+    recomb_nodes <- which(node_info[, 3]==i)
+    nodes_in_edge <- c(which(node_info[, 3]==0 & node_info[, 4]==clonal_edge[i, 2]),
+                       recomb_nodes,
+                       which(node_info[, 3]==0 & node_info[, 4]==clonal_edge[i, 1]))
+    for (i in 2:length(nodes_in_edge)){
+      if ((!node_info[nodes_in_edge[i], 2]) & node_info[nodes_in_edge[i], 3]) {
+        # recombination case
+        leaf_node <- node_info[nodes_in_edge[i-1], 5]
+        x <- recomb_edge[node_info[nodes_in_edge[i], 4], 5]
+        y <- recomb_edge[node_info[nodes_in_edge[i], 4], 6]
+        node_info[c(nodes_in_edge[i]-1, nodes_in_edge[i]), 5] <- c(node_index, node_index+1L)
 
+        node_mat[c(node_index, node_index+1), ] <- FALSE
+        node_mat[node_index+1, x:y] <- node_mat[leaf_node, x:y]
+        node_mat[node_index, -(x:y)] <- node_mat[leaf_node, -(x:y)]
+
+        edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1L)
+        edge_matrix[c(edge_index, edge_index+1), 1] <- c(node_index, node_index+1L)
+        edge_matrix[c(edge_index, edge_index+1), 2] <- leaf_node
+        edge_matrix[c(edge_index, edge_index+1), 3] <- node_info[nodes_in_edge[i], 1] -
+                                                       node_info[nodes_in_edge[i-1], 1]
+        node_index <- node_index + 2L
+        edge_index <- edge_index + 1L
+      } else if (node_info[nodes_in_edge[i], 2] & node_info[nodes_in_edge[i], 3]) {
+        # coalescence (income recombination edge)
+
+      }
+    }
   }
 
 
