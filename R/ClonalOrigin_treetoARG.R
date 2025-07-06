@@ -141,7 +141,18 @@ ClonalOrigin_treetoARG <- function(n, rho, L, delta,
   edge_matrix <- matrix(NA, nrow=(2*(n-1)+4*n_recomb), ncol=3)
   node_mat <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=L)
   edge_mat_index <- rep(NA, 2*(n-1)+4*n_recomb)
-  node_clonal <- rep(NA, 3*n_recomb+2*n-1)
+  node_info <- matrix(NA, nrow=(3*n_recomb+2*n-1), ncol=4)
+  colnames(node_info) <- c("height", "clonal", "recomb_edge", "index")
+
+  # Organize node information
+  # nodes from clonal tree
+  node_info[1:(2*n-1), 1] <- clonal_node_height
+  node_info[1:(2*n-1), 2] <- TRUE
+  node_info[1:(2*n-1), 4] <- 1:(2*n-1)
+  # nodes from recombination edges
+  node_info[(2*n):(2*n+n_recomb-1), 1] <-
+
+
 
   # rearrange and backwards in time
   for (i in 1:(2*(n-1))){
