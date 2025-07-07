@@ -38,7 +38,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
   node_mat <- matrix(NA, nrow=node_max, ncol=L)    # node material
   node_clonal <- rep(NA, node_max)                 # node clonal
   node_height[1:n] <- 0                            # initialize first n nodes
-  node_mat[1:n, ] <- 1
+  node_mat[1:n, ] <- TRUE
   node_clonal[1:n] <- TRUE
 
   # Probability of starting recombination at each site
@@ -72,8 +72,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
 
       # append root node
       node_height[node_index] <- t_sum
-      node_mat[node_index, ] <- as.integer(node_mat[leaf_node[1], ] |
-                                             node_mat[leaf_node[2], ])
+      node_mat[node_index, ] <- node_mat[leaf_node[1], ] | node_mat[leaf_node[2], ]
 
       # update clonal lineage
       node_clonal[node_index] <- TRUE
@@ -94,7 +93,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
 
       edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1)
 
-      node_mat[c(node_index, node_index+1), ] <- 0
+      node_mat[c(node_index, node_index+1), ] <- FALSE
       node_mat[node_index, x:y] <- node_mat[leaf_node, x:y]
       node_mat[node_index+1, -(x:y)] <- node_mat[leaf_node, -(x:y)]
 
