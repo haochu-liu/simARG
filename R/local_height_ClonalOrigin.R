@@ -5,6 +5,7 @@
 #' @param ARG A `ClonalOrigin` object.
 #' @param location The site location for local tree.
 #' @return Height of the local tree
+#' @export
 local_height_ClonalOrigin <- function(ARG, location) {
   if (!inherits(ARG, "ClonalOrigin")) {
     cli::cli_abort("Object must be of class 'ClonalOrigin'!")
