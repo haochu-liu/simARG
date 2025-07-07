@@ -52,16 +52,18 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
 
   while (k > 1) {
     # sample a new event time
-    event_time <- rexp(1, rate=k*(k-1+rho)/2)
+    k_clonal <- sum(node_clonal[pool]==TRUE)
+    k_nonclonal <- sum(node_clonal[pool]==FALSE)
+    event_time <- rexp(1, rate=k_clonal*(k_clonal-1+k_nonclonal+rho)/2)
     t <- c(t, event_time)
     t_sum <- t_sum + event_time
     # sample whether the event is a coalescent
-    p_coale <- rbinom(n=1, size=1, prob=(k-1)/(k-1+rho))
+    p_coale <- rbinom(n=1, size=1, prob=(k_clonal-1+k_nonclonal)/(k_clonal-1+k_nonclonal+rho))
     if (p_coale == 1) {
       # coalescent event
       leaf_node <- sample(pool, size=2, replace=FALSE)
-      if (!any(node_clonal[leaf_node])) {
-        leaf_node[2] <- sample(pool[node_clonal[pool]], size=1, replace=FALSE)
+      while (!any(node_clonal[leaf_node])) {
+        leaf_node <- sample(pool, size=2, replace=FALSE)
       }
 
       # append edges
