@@ -100,10 +100,7 @@ ClonalOrigin <- function(n, rho, L, delta) {
     if (num_lineage == (1+length(i_above_b))) {
       recomb_edge[i, 4] <- a_rexp[i] + recomb_edge[i, 2]
     } else {
-      #recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
-                           #sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
-                           #recomb_edge[i, 2]
-      recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) +
+      recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
                             sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
                             recomb_edge[i, 2]
     }
