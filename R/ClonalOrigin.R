@@ -65,7 +65,7 @@ ClonalOrigin <- function(n, rho, L, delta, edgemat=TRUE) {
   # stop when there is no recombination
   if (n_recomb == 0) {
     ARG = list(clonal_edge=clonal_edge,
-               recomb_edge=NA,
+               recomb_edge=NULL,
                clonal_node_height=clonal_node_height,
                sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
     class(ARG) <- "ClonalOrigin"

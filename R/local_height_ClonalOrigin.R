@@ -11,15 +11,15 @@ local_height_ClonalOrigin <- function(ARG, location) {
     cli::cli_abort("Object must be of class 'ClonalOrigin'!")
   }
 
-  if (is.na(ARG$recomb_edge)) {
+  if (is.null(ARG$recomb_edge)) {
     return(ARG$sum_time)
   }
-  edge_index <- which(recomb_edge[, 3] == -1 &
-                      recomb_edge[, 5] <= location &
-                      recomb_edge[, 6] >= location)
-  if (length(edge_index)) {
+  edge_index <- which(ARG$recomb_edge[, 3] == -1 &
+                      ARG$recomb_edge[, 5] <= location &
+                      ARG$recomb_edge[, 6] >= location)
+  if (!length(edge_index)) {
     return(ARG$sum_time)
   } else {
-    return(max(recomb_edge[edge_index, 4]))
+    return(max(ARG$recomb_edge[edge_index, 4]))
   }
 }
