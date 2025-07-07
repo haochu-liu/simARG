@@ -13,7 +13,7 @@
 #' @examples
 #' ARG1 <- ClonalOrigin(100L, 5, 100L, 5)
 #' ARG2 <- ClonalOrigin(5L, 1, 10L, 1)
-ClonalOrigin <- function(n, rho, L, delta, edgemat=TRUE) {
+ClonalOrigin <- function(n, rho, L, delta) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -100,9 +100,12 @@ ClonalOrigin <- function(n, rho, L, delta, edgemat=TRUE) {
     if (num_lineage == (1+length(i_above_b))) {
       recomb_edge[i, 4] <- a_rexp[i] + recomb_edge[i, 2]
     } else {
-      recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
-                           sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
-                           recomb_edge[i, 2]
+      #recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
+                           #sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
+                           #recomb_edge[i, 2]
+      recomb_edge[i, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) +
+                            sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
+                            recomb_edge[i, 2]
     }
     # simulate a_edge
     if (num_lineage > 1) {
