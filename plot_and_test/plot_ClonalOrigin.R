@@ -10,7 +10,7 @@ height_df <- data.frame(s1=rep(NA, 2000),
 
 for (i in 1:1000) {
   ARG <- ClonalOrigin_ARG(100L, 10, 100L, 30, optimise_recomb=TRUE)
-  Clonaltree <- ClonalOrigin(100L, 10, 100L, 30)
+  Clonaltree <- ClonalOrigin2(100L, 10, 100L, 30)
   tree1 <- local_tree(ARG, 1L)
   tree50 <- local_tree(ARG, 50L)
   tree80 <- local_tree(ARG, 80L)

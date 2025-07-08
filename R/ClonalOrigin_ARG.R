@@ -52,8 +52,8 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
 
   while (k > 1) {
     # sample a new event time
-    k_clonal <- sum(node_clonal[pool]==TRUE)
-    k_nonclonal <- sum(node_clonal[pool]==FALSE)
+    k_clonal <- sum(node_clonal[pool])
+    k_nonclonal <- k - k_clonal
     coale_rate <- k*(k-1)/2 - k_nonclonal*(k_nonclonal-1)/2
     recomb_rate <- k_clonal*rho/2
     event_rate <- coale_rate + recomb_rate
@@ -65,9 +65,9 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
     p_coale <- rbinom(n=1, size=1, prob=coale_prob)
     if (p_coale == 1) {
       # coalescent event
-      leaf_node <- sample(pool, size=2, replace=FALSE)
-      while (!any(node_clonal[leaf_node])) {
+      repeat {
         leaf_node <- sample(pool, size=2, replace=FALSE)
+        if (any(node_clonal[leaf_node])) {break}
       }
 
       # append edges

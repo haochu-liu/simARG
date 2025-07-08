@@ -20,6 +20,6 @@ local_height_ClonalOrigin <- function(ARG, location) {
   if (!length(edge_index)) {
     return(ARG$clonal_time)
   } else {
-    return(max(ARG$recomb_edge[edge_index, 4]))
+    return(max(c(ARG$recomb_edge[edge_index, 4], ARG$clonal_time)))
   }
 }
