@@ -67,7 +67,8 @@ ClonalOrigin <- function(n, rho, L, delta) {
     ARG = list(clonal_edge=clonal_edge,
                recomb_edge=NULL,
                clonal_node_height=clonal_node_height,
-               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
+               sum_time=t_sum, n=n, rho=rho, L=L,
+               delta=delta, clonal_time=t_sum)
     class(ARG) <- "ClonalOrigin"
     return(ARG)
   }
@@ -126,7 +127,7 @@ ClonalOrigin <- function(n, rho, L, delta) {
              recomb_edge=recomb_edge,
              clonal_node_height=clonal_node_height,
              sum_time=max(t_sum, recomb_edge[, 4]), n=n, rho=rho, L=L,
-             delta=delta)
+             delta=delta, clonal_time=t_sum)
   class(ARG) <- "ClonalOrigin"
   return(ARG)
 }
