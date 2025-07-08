@@ -24,6 +24,11 @@ clonal_tree_FSM <- function(ARG) {
   ARG$edge_mat <- ARG$edge_mat[edge_clonal, ]
   ARG$edge_index <- edge_index[edge_clonal]
 
+  ARG$edge <- ARG$edge[order(ARG$edge[, 1]), ]
+  duplicated_edge <- duplicated(ARG$edge[, 1]) | duplicated(ARG$edge[, 1], fromLast = T)
+  last_duplicated <- tail(which(duplicated_edge), 1)
+  ARG$edge <- ARG$edge[1:last_duplicated, ]
+
   class(ARG) <- "localtree"
 
   ARG$waiting_time <- NULL

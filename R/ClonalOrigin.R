@@ -86,9 +86,13 @@ ClonalOrigin <- function(n, rho, L, delta) {
                              replace=TRUE, prob=clonal_edge[, 3])
 
   # simulate x and y
-  recomb_edge[, 5] <- findInterval(runif(n_recomb), probstartcum) + 1
-  recomb_edge[, 6] <- pmin(recomb_edge[, 5] + rgeom(n_recomb, 1/delta), L)
+  # recomb_edge[, 5] <- findInterval(runif(n_recomb), probstartcum) + 1
+  # recomb_edge[, 6] <- pmin(recomb_edge[, 5] + rgeom(n_recomb, 1/delta), L)
   for (i in 1:n_recomb) {
+    # simulate x and y
+    recomb_edge[i, 5] <- which(runif(1) < probstartcum)[1]
+    recomb_edge[i, 6] <- min(recomb_edge[i, 5] + rgeom(1, 1/delta), L)
+
     # simulate b_height
     recomb_edge[i, 2] <- runif(1, max=clonal_edge[recomb_edge[i, 1], 3]) +
                          clonal_node_height[clonal_edge[recomb_edge[i, 1], 2]]

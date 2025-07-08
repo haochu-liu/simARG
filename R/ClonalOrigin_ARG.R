@@ -54,19 +54,20 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
     # sample a new event time
     k_clonal <- sum(node_clonal[pool]==TRUE)
     k_nonclonal <- sum(node_clonal[pool]==FALSE)
-    event_time <- rexp(1, rate=k_clonal*(k_clonal-1+k_nonclonal+rho)/2)
+    coale_rate <- k*(k-1)/2 - k_nonclonal*(k_nonclonal-1)/2
+    recomb_rate <- k_clonal*rho/2
+    event_rate <- coale_rate + recomb_rate
+    coale_prob <- coale_rate / event_rate
+    event_time <- rexp(1, rate=event_rate)
     t <- c(t, event_time)
     t_sum <- t_sum + event_time
     # sample whether the event is a coalescent
-    p_coale <- rbinom(n=1, size=1, prob=(k_clonal-1+k_nonclonal)/(k_clonal-1+k_nonclonal+rho))
+    p_coale <- rbinom(n=1, size=1, prob=coale_prob)
     if (p_coale == 1) {
       # coalescent event
       leaf_node <- sample(pool, size=2, replace=FALSE)
       while (!any(node_clonal[leaf_node])) {
         leaf_node <- sample(pool, size=2, replace=FALSE)
-      }
-      if (!any(node_clonal[leaf_node])) {
-        print(leaf_node)
       }
 
       # append edges
@@ -89,11 +90,11 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       k <- k - 1
     } else {
       # recombination event
-      recomb_pool <- pool[node_clonal[pool]]
-      if (length(recomb_pool)==1) {
-        leaf_node <- recomb_pool
+      clonal_pool <- pool[node_clonal[pool]]
+      if (length(clonal_pool)==1) {
+        leaf_node <- clonal_pool
       } else {
-        leaf_node <- sample(recomb_pool, size=1, replace=FALSE)
+        leaf_node <- sample(clonal_pool, size=1, replace=FALSE)
       }
 
       x <- which(runif(1) < probstartcum)[1]
@@ -101,7 +102,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
 
       if (optimise_recomb & !any(node_mat[leaf_node, x:y])) {next}
 
-      edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1)
+      edge_mat_index[c(edge_index, edge_index+1)] <- c(node_index, node_index+1L)
 
       node_mat[c(node_index, node_index+1), ] <- FALSE
       node_mat[node_index, x:y] <- node_mat[leaf_node, x:y]
