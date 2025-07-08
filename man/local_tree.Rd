@@ -20,5 +20,5 @@ Select edges by a chosen site to create the local tree.
 }
 \examples{
 ARG <- FSM_ARG(20L, 1, 100L)
-local_tree <- local_tree(ARG_mutation, 2L)
+local_tree <- local_tree(ARG, 2L)
 }

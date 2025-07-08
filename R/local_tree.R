@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' ARG <- FSM_ARG(20L, 1, 100L)
-#' local_tree <- local_tree(ARG_mutation, 2L)
+#' local_tree <- local_tree(ARG, 2L)
 local_tree <- function(ARG, location) {
   if (!inherits(ARG, "ISM_ARG") & !inherits(ARG, "FSM_ARG")) {
     cli::cli_abort("Object must be of class 'ISM_ARG' or 'FSM_ARG'")
@@ -29,7 +29,9 @@ local_tree <- function(ARG, location) {
   local_tree$waiting_time <- NULL
   local_tree$k <- NULL
   local_tree$sum_time <- tree_height(local_tree)
-  local_tree$mutation[local_tree$mutation[, 1] %in% local_tree$edge_index, ]
+  if (!is.null(local_tree$mutation)){
+    local_tree$mutation[local_tree$mutation[, 1] %in% local_tree$edge_index, ]
+  }
 
   return(local_tree)
 }
