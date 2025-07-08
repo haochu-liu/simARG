@@ -65,6 +65,9 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       while (!any(node_clonal[leaf_node])) {
         leaf_node <- sample(pool, size=2, replace=FALSE)
       }
+      if (!any(node_clonal[leaf_node])) {
+        print(leaf_node)
+      }
 
       # append edges
       edge_matrix[c(edge_index, edge_index+1), 1] <- node_index
@@ -86,7 +89,12 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       k <- k - 1
     } else {
       # recombination event
-      leaf_node <- sample(pool[node_clonal[pool]], size=1, replace=FALSE)
+      recomb_pool <- pool[node_clonal[pool]]
+      if (length(recomb_pool)==1) {
+        leaf_node <- recomb_pool
+      } else {
+        leaf_node <- sample(recomb_pool, size=1, replace=FALSE)
+      }
 
       x <- which(runif(1) < probstartcum)[1]
       y <- min(x + rgeom(1, 1/delta), L)
