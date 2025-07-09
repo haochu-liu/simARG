@@ -10,7 +10,7 @@ height_df <- data.frame(s1=rep(NA, 2000),
 
 for (i in 1:1000) {
   ARG <- ClonalOrigin_ARG(100L, 10, 100L, 30, optimise_recomb=TRUE)
-  Clonaltree <- ClonalOrigin2(100L, 10, 100L, 30)
+  Clonaltree2 <- ClonalOrigin2(100L, 10, 100L, 30)
   tree1 <- local_tree(ARG, 1L)
   tree50 <- local_tree(ARG, 50L)
   tree80 <- local_tree(ARG, 80L)
@@ -19,10 +19,10 @@ for (i in 1:1000) {
   height_df$s50[i] <- tree50$sum_time
   height_df$s80[i] <- tree80$sum_time
   height_df$clonal[i] <- clonal_tree_ARG$sum_time
-  height_df$s1[i+1000] <- local_height_ClonalOrigin(Clonaltree, 1)
-  height_df$s50[i+1000] <- local_height_ClonalOrigin(Clonaltree, 50)
-  height_df$s80[i+1000] <- local_height_ClonalOrigin(Clonaltree, 80)
-  height_df$clonal[i+1000] <- Clonaltree$clonal_time
+  height_df$s1[i+1000] <- local_height_ClonalOrigin(Clonaltree2, 1)
+  height_df$s50[i+1000] <- local_height_ClonalOrigin(Clonaltree2, 50)
+  height_df$s80[i+1000] <- local_height_ClonalOrigin(Clonaltree2, 80)
+  height_df$clonal[i+1000] <- Clonaltree2$clonal_time
   if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
 }
 

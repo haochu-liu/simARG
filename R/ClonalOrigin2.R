@@ -94,10 +94,10 @@ ClonalOrigin2 <- function(n, rho, L, delta) {
     recomb_edge[i, 6] <- min(recomb_edge[i, 5] + rgeom(1, 1/delta), L)
 
     # simulate b_height
-    recomb_edge[i, 2] <- runif(1, max=clonal_edge[recomb_edge[i, 1], 3]) +
+    recomb_edge[i, 2] <- runif(1, min=0, max=clonal_edge[recomb_edge[i, 1], 3]) +
                          clonal_node_height[clonal_edge[recomb_edge[i, 1], 2]]
     # identify a_height
-    above_node <- clonal_edge[recomb_edge[i, 1], 1]
+    above_node <- which(recomb_edge[i, 2] < clonal_node_height)[1]
     below_length <- 0
     below_height <- recomb_edge[i, 2]
     for (j in above_node:(2*n)) {
@@ -109,9 +109,14 @@ ClonalOrigin2 <- function(n, rho, L, delta) {
       }
       if (total_seg > (a_rexp[i] - below_length)) {
         recomb_edge[i, 4] <- below_height + (a_rexp[i] - below_length)/edge_num
-        recomb_edge[i, 3] <- -1
+        if (edge_num == 1) {
+          recomb_edge[i, 3] <- -1
+        } else {
+          recomb_edge[i, 3] <- 1
+        }
+        break
       } else {
-        below_height <- clonal_node_height[i]
+        below_height <- clonal_node_height[j]
         below_length <- below_length + total_seg
       }
     }

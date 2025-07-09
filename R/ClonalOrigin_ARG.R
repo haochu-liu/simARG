@@ -90,11 +90,9 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       k <- k - 1
     } else {
       # recombination event
-      clonal_pool <- pool[node_clonal[pool]]
-      if (length(clonal_pool)==1) {
-        leaf_node <- clonal_pool
-      } else {
-        leaf_node <- sample(clonal_pool, size=1, replace=FALSE)
+      repeat {
+        leaf_node <- sample(pool, size=1, replace=FALSE)
+        if (node_clonal[leaf_node]) {break}
       }
 
       x <- which(runif(1) < probstartcum)[1]
