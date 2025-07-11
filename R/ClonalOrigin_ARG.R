@@ -49,6 +49,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
   edge_index <- 1L
   node_index <- as.integer(n + 1)
   pool <- as.integer(1:n)
+  n_recomb <- 0
 
   while (k > 1) {
     # sample a new event time
@@ -95,6 +96,7 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
         if (node_clonal[leaf_node]) {break}
       }
 
+      n_recomb <- n_recomb + 1
       x <- which(runif(1) < probstartcum)[1]
       y <- min(x + rgeom(1, 1/delta), L)
 
@@ -142,14 +144,14 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta, n_recomb=n_recomb)
   } else {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
                edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta, n_recomb=n_recomb)
   }
   class(ARG) <- "FSM_ARG"
   return(ARG)

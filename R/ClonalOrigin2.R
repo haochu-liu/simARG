@@ -13,7 +13,7 @@
 #' @examples
 #' ARG1 <- ClonalOrigin(100L, 5, 100L, 5)
 #' ARG2 <- ClonalOrigin(5L, 1, 10L, 1)
-ClonalOrigin2 <- function(n, rho, L, delta) {
+ClonalOrigin2 <- function(n, rho, L, delta, optimise) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -123,17 +123,19 @@ ClonalOrigin2 <- function(n, rho, L, delta) {
   }
 
   # delete rows when having same in and out nodes
-  same_in_out <- which(recomb_edge[, 1] == recomb_edge[, 3])
-  if (length(same_in_out)) {
-    recomb_edge <- recomb_edge[-same_in_out, ]
-    n_recomb <- nrow(recomb_edge)
+  if (optimise) {
+    same_in_out <- which(recomb_edge[, 1] == recomb_edge[, 3])
+    if (length(same_in_out)) {
+      recomb_edge <- recomb_edge[-same_in_out, ]
+      n_recomb <- nrow(recomb_edge)
+    }
   }
 
   ARG = list(clonal_edge=clonal_edge,
              recomb_edge=recomb_edge,
              clonal_node_height=clonal_node_height,
              sum_time=max(t_sum, recomb_edge[, 4]), n=n, rho=rho, L=L,
-             delta=delta, clonal_time=t_sum)
+             delta=delta, clonal_time=t_sum, n_recomb=n_recomb)
   class(ARG) <- "ClonalOrigin"
   return(ARG)
 }

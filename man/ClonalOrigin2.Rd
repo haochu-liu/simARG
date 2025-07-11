@@ -4,7 +4,7 @@
 \alias{ClonalOrigin2}
 \title{An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
 \usage{
-ClonalOrigin2(n, rho, L, delta)
+ClonalOrigin2(n, rho, L, delta, optimise)
 }
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
