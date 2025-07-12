@@ -1,6 +1,6 @@
 library(ggplot2)
 library(sdprisk)
-set.seed(1000)
+set.seed(10)
 
 
 height_df <- data.frame(s1=rep(NA, 2000),
