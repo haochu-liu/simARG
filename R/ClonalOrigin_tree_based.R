@@ -196,6 +196,7 @@ ClonalOrigin_tree_based <- function(n, rho, L, delta) {
              recomb_edge=recomb_edge,
              node_info=node_info,
              node_mat=node_mat,
+             recomb_node_mat=recomb_node_mat,
              sum_time=node_info[(2*n - 1 + 2*n_recomb), 2], n=n, rho=rho, L=L,
              delta=delta, clonal_time=t_sum)
   class(ARG) <- "ClonalOrigin"
