@@ -14,12 +14,13 @@ local_height_ClonalOrigin <- function(ARG, location) {
   if (is.null(ARG$recomb_edge)) {
     return(ARG$clonal_time)
   }
-  edge_index <- which(ARG$recomb_edge[, 3] == -1 &
-                      ARG$recomb_edge[, 5] <= location &
-                      ARG$recomb_edge[, 6] >= location)
-  if (!length(edge_index)) {
+  root_node_index <- which(ARG$node_info[, 2]>=ARG$clonal_time)
+  if (length(root_node_index)==1) {
     return(ARG$clonal_time)
-  } else {
-    return(max(c(ARG$recomb_edge[edge_index, 4], ARG$clonal_time)))
   }
+  root_node <- ARG$node_info[root_node_index, 1]
+  root_node_mat <- ARG$node_mat[root_node, ]
+  tar_node_index <- root_node_index[which(root_node_mat[, location])]
+
+  return(min(ARG$node_info[tar_node_index, 2]))
 }

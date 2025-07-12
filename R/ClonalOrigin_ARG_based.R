@@ -14,9 +14,9 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_ARG(100L, 5, 100L, 5)
-#' ARG2 <- ClonalOrigin_ARG(5L, 1, 10L, 1, optimise_recomb=TRUE)
-ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
+#' ARG1 <- ClonalOrigin_ARG_based(100L, 5, 100L, 5)
+#' ARG2 <- ClonalOrigin_ARG_based(5L, 1, 10L, 1, optimise_recomb=TRUE)
+ClonalOrigin_ARG_based <- function(n, rho, L, delta, node_max=1000,
                              optimise_recomb=FALSE, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
