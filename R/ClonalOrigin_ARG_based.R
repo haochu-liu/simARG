@@ -49,7 +49,6 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
   edge_index <- 1L
   node_index <- as.integer(n + 1)
   pool <- as.integer(1:n)
-  n_recomb <- 0
 
   while (k > 1) {
     # sample a new event time
@@ -91,12 +90,13 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
       k <- k - 1
     } else {
       # recombination event
-      repeat {
-        leaf_node <- sample(pool, size=1, replace=FALSE)
-        if (node_clonal[leaf_node]) {break}
+      clonal_pool <- pool[node_clonal[pool]]
+      if (length(clonal_pool)==1) {
+        leaf_node <- clonal_pool
+      } else {
+        leaf_node <- sample(clonal_pool, size=1, replace=FALSE)
       }
 
-      n_recomb <- n_recomb + 1
       x <- which(runif(1) < probstartcum)[1]
       y <- min(x + rgeom(1, 1/delta), L)
 
@@ -144,14 +144,14 @@ ClonalOrigin_ARG <- function(n, rho, L, delta, node_max=1000,
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta, n_recomb=n_recomb)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   } else {
     ARG = list(edge=edge_matrix[1:(edge_index-1), ],
                edge_mat_index=edge_mat_index[1:(edge_index-1)],
                node_height=node_height[1:(node_index-1)],
                node_mat=node_mat[1:(node_index-1), ],
                node_clonal=node_clonal[1:(node_index-1)],
-               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta, n_recomb=n_recomb)
+               sum_time=t_sum, n=n, rho=rho, L=L, delta=delta)
   }
   class(ARG) <- "FSM_ARG"
   return(ARG)
