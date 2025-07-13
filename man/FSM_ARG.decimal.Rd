@@ -6,7 +6,7 @@
 \usage{
 FSM_ARG.decimal(
   n,
-  rho,
+  rho_site,
   L,
   bacteria = FALSE,
   delta = NULL,
@@ -18,7 +18,7 @@ FSM_ARG.decimal(
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
 
-\item{rho}{The recombination parameter.}
+\item{rho_site}{The recombination parameter per site.}
 
 \item{L}{An integer for the number of sites (>= 20).}
 
@@ -40,6 +40,6 @@ Simulate coalescent an recombination events and construct an ARG.
 Assume finite site model.
 }
 \examples{
-ARG1 <- FSM_ARG.decimal(20L, 1, 100L)
-ARG2 <- FSM_ARG.decimal(5L, 1, 200L, bacteria = TRUE, delta = 10, optimise_recomb = TRUE, clonal = TRUE)
+ARG1 <- FSM_ARG.decimal(20L, 0.1, 100L)
+ARG2 <- FSM_ARG.decimal(5L, 0.1, 200L, bacteria = TRUE, delta = 10, optimise_recomb = TRUE, clonal = TRUE)
 }

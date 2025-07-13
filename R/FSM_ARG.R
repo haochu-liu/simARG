@@ -4,7 +4,7 @@
 #' Assume finite site model.
 #'
 #' @param n An integer for the number of leaf lineages.
-#' @param rho The recombination parameter.
+#' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
 #' @param bacteria logical; If TRUE, genes recombine by conversion.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
@@ -16,9 +16,9 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- FSM_ARG(20L, 1, 100L)
+#' ARG1 <- FSM_ARG(20L, 0.1, 100L)
 #' ARG2 <- FSM_ARG(5L, 1, 10L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
-FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
+FSM_ARG <- function(n, rho_site, L, bacteria=FALSE, delta=NULL, node_max=1000,
                     optimise_recomb=FALSE, clonal=FALSE, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
@@ -36,6 +36,7 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
   k_vector <- c(k)
   t <- vector("numeric", length = 0) # vector of event times
   t_sum <- 0
+  rho <- L * rho_site
 
   edge_matrix <- matrix(NA, nrow=node_max, ncol=3) # root and leaf nodes, length
   colnames(edge_matrix) <- c("node1", "node2", "length")
@@ -52,7 +53,9 @@ FSM_ARG <- function(n, rho, L, bacteria=FALSE, delta=NULL, node_max=1000,
   if (clonal) {node_clonal[1:n] <- TRUE}
 
   # Probability of starting recombination at each site
-  probstart <- rep(1/L, L)
+  probstart <- rep(1, L)
+  probstart[1] <- delta
+  probstart <- probstart / sum(probstart)
   probstartcum <- cumsum(probstart)
 
   # Initialize variables and vector

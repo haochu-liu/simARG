@@ -6,7 +6,7 @@
 \usage{
 FSM_ARG(
   n,
-  rho,
+  rho_site,
   L,
   bacteria = FALSE,
   delta = NULL,
@@ -19,7 +19,7 @@ FSM_ARG(
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
 
-\item{rho}{The recombination parameter.}
+\item{rho_site}{The recombination parameter per site.}
 
 \item{L}{An integer for the number of sites.}
 
@@ -43,6 +43,6 @@ Simulate coalescent an recombination events and construct an ARG.
 Assume finite site model.
 }
 \examples{
-ARG1 <- FSM_ARG(20L, 1, 100L)
+ARG1 <- FSM_ARG(20L, 0.1, 100L)
 ARG2 <- FSM_ARG(5L, 1, 10L, bacteria = TRUE, delta = 1, optimise_recomb = TRUE, clonal = TRUE)
 }
