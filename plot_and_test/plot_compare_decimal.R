@@ -60,6 +60,10 @@ for (i in 1:nrow(time_df)) {
 }
 
 time_plot <- time_df
+time_plot$rho_per_site <- time_df$rho
+time_plot$rho <- time_df$rho * 1e5
+
+# save(time_plot, file = "decimal_time.rda")
 
 ggplot(time_plot, aes(x=rho, y=t, color=func)) +
   geom_line(, linewidth = 1.2, alpha=0.7) +
@@ -69,7 +73,7 @@ ggplot(time_plot, aes(x=rho, y=t, color=func)) +
                               "simbac_ARG"="orange",
                               "simbac_ARG.decimal"="yellow")) +
   labs(
-    title = "Running time for different ARG simulation methods",
+    title = "Running time for different ARG simulation methods (n = 1e5)",
     x = "rho",
     y = "time",
     color = "function"
