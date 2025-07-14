@@ -81,7 +81,10 @@ ClonalOrigin_tree_based <- function(n, rho, L, delta) {
                              "a_edge", "a_height",
                              "x", "y")
   a_rexp <- rexp(n_recomb, rate=1)
-  probstartcum <- cumsum(rep(1/L, L))
+  probstart <- rep(1, L)
+  probstart[1] <- delta
+  probstart <- probstart / sum(probstart)
+  probstartcum <- cumsum(probstart)
   # simulate b_edge (similar to mutation)
   recomb_edge[, 1] <- sample(1:(2*(n-1)), n_recomb,
                              replace=TRUE, prob=clonal_edge[, 3])

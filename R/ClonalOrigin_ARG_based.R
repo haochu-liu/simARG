@@ -42,7 +42,9 @@ ClonalOrigin_ARG_based <- function(n, rho, L, delta, node_max=1000,
   node_clonal[1:n] <- TRUE
 
   # Probability of starting recombination at each site
-  probstart <- rep(1/L, L)
+  probstart <- rep(1, L)
+  probstart[1] <- delta
+  probstart <- probstart / sum(probstart)
   probstartcum <- cumsum(probstart)
 
   # Initialize variables and vector
