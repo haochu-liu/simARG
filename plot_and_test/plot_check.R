@@ -1,18 +1,21 @@
 library(ggplot2)
 library(sdprisk)
-set.seed(100)
+set.seed(123)
 
 
-height_df <- data.frame(s1=rep(NA, 2000),
-                        s50=rep(NA, 2000),
-                        s80=rep(NA, 2000),
-                        arg=rep(NA, 2000),
-                        clonal=rep(NA, 2000),
-                        type=c(rep("ARG-based", 1000), rep("Tree-based", 1000)))
+height_df <- data.frame(s1=rep(NA, 20000),
+                        s50=rep(NA, 20000),
+                        s80=rep(NA, 20000),
+                        arg=rep(NA, 20000),
+                        clonal=rep(NA, 20000),
+                        type=c(rep("ARG-based", 10000), rep("Tree-based", 10000)))
 
-for (i in 1:1000) {
-  ARG <- ClonalOrigin_ARG_based(100L, 10, 100L, 30, optimise_recomb=TRUE)
-  Clonaltree <- ClonalOrigin_tree_based(100L, 10, 100L, 30)
+for (i in 1:10000) {
+  repeat{
+    ARG <- testClonalOrigin_ARG_based(100L, 0.5, 100L, 30, optimise_recomb=TRUE)
+    if (sum(ARG$node_clonal == FALSE) == 1) {break}
+  }
+  Clonaltree <- testClonalOrigin_tree_based(100L, 0, 100L, 30)
   tree1 <- local_tree(ARG, 1L)
   tree50 <- local_tree(ARG, 50L)
   tree80 <- local_tree(ARG, 80L)
@@ -22,11 +25,11 @@ for (i in 1:1000) {
   height_df$s80[i] <- tree80$sum_time
   height_df$clonal[i] <- clonal_tree_ARG$sum_time
   height_df$arg[i] <- ARG$sum_time
-  height_df$s1[i+1000] <- local_height_ClonalOrigin(Clonaltree, 1)
-  height_df$s50[i+1000] <- local_height_ClonalOrigin(Clonaltree, 50)
-  height_df$s80[i+1000] <- local_height_ClonalOrigin(Clonaltree, 80)
-  height_df$clonal[i+1000] <- Clonaltree$clonal_time
-  height_df$arg[i+1000] <- Clonaltree$sum_time
+  height_df$s1[i+10000] <- local_height_ClonalOrigin(Clonaltree, 1)
+  height_df$s50[i+10000] <- local_height_ClonalOrigin(Clonaltree, 50)
+  height_df$s80[i+10000] <- local_height_ClonalOrigin(Clonaltree, 80)
+  height_df$clonal[i+10000] <- Clonaltree$clonal_time
+  height_df$arg[i+10000] <- Clonaltree$sum_time
   if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
 }
 
