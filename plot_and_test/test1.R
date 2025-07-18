@@ -18,3 +18,28 @@ for (i in 1:100) {
 
 set.seed(4)
 ARG <- testClonalOrigin_ARG_based(6L, 0.5, 10L, 3, optimise_recomb=TRUE)
+
+
+ARG <- testClonalOrigin_tree_based(5L, 1, 10L, 3)
+
+for (i in 1:100) {
+  set.seed(i)
+  ARG <- testClonalOrigin_tree_based(6L, 1, 10L, 3)
+  tree1 <- local_height_ClonalOrigin(ARG, 1)
+  tree3 <- local_height_ClonalOrigin(ARG, 3)
+  tree6 <- local_height_ClonalOrigin(ARG, 6)
+
+  if (tree1 != tree3 |
+      tree3 != tree6 |
+      tree6 != tree1) {
+    print(i)
+  }
+}
+
+set.seed(2)
+ARG <- testClonalOrigin_tree_based(6L, 1, 10L, 3)
+local_height_ClonalOrigin(ARG, 1)
+local_height_ClonalOrigin(ARG, 3)
+local_height_ClonalOrigin(ARG, 6)
+
+
