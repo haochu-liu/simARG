@@ -27,8 +27,16 @@ recomb_info2 <- function(tree_length, L, rho_s, delta) {
     } else {
       survive_index <- which(recomb_pos[1:recomb_num, 2] == (i-1))
       R_new <- rpois(1, rho_s*tree_length/2)
-      R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
-      remain_index <- sample(survive_index, R_old)
+      if (length(survive_index) >= 0) {
+        R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
+        if (length(survive_index) == 1) {
+          remain_index <- survive_index
+        } else {
+          remain_index <- sample(survive_index, R_old)
+        }
+      } else {
+        R_old <- 0
+      }
     }
 
     if (R_new > 0) {
