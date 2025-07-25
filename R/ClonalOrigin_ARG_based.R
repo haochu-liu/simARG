@@ -4,7 +4,7 @@
 #' The non-clonal lineages are not allowed to either recombine or coalesce with each other.
 #'
 #' @param n An integer for the number of leaf lineages.
-#' @param rho The recombination parameter.
+#' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
 #' @param node_max numeric; Initial maximal node size (default = 1000).
@@ -14,9 +14,9 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_ARG_based(100L, 5, 100L, 5)
+#' ARG1 <- ClonalOrigin_ARG_based(100L, 0.5, 100L, 5)
 #' ARG2 <- ClonalOrigin_ARG_based(5L, 1, 10L, 1, optimise_recomb=TRUE)
-ClonalOrigin_ARG_based <- function(n, rho, L, delta, node_max=1000,
+ClonalOrigin_ARG_based <- function(n, rho_site, L, delta, node_max=1000,
                              optimise_recomb=FALSE, edgemat=TRUE) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
@@ -30,6 +30,7 @@ ClonalOrigin_ARG_based <- function(n, rho, L, delta, node_max=1000,
   k_vector <- c(k)
   t <- vector("numeric", length = 0) # vector of event times
   t_sum <- 0
+  rho <- L * rho_site
 
   edge_matrix <- matrix(NA, nrow=node_max, ncol=3) # root and leaf nodes, length
   colnames(edge_matrix) <- c("node1", "node2", "length")

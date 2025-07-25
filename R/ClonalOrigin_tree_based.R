@@ -4,16 +4,16 @@
 #' Recombinations are added to a clonal tree to construct an ARG.
 #'
 #' @param n An integer for the number of leaf lineages.
-#' @param rho The recombination parameter.
+#' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
 #' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
 #' @return A list containing clonal tree and recombination edges.
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_tree_based(100L, 5, 100L, 5)
+#' ARG1 <- ClonalOrigin_tree_based(100L, 0.5, 100L, 5)
 #' ARG2 <- ClonalOrigin_tree_based(5L, 1, 10L, 1)
-ClonalOrigin_tree_based <- function(n, rho, L, delta) {
+ClonalOrigin_tree_based <- function(n, rho_site, L, delta) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -22,6 +22,7 @@ ClonalOrigin_tree_based <- function(n, rho, L, delta) {
 
   k = n
   t_sum <- 0
+  rho <- L * rho_site
 
   # Initialize varables for clonal tree
   clonal_edge <- matrix(NA, nrow=2*(n-1), ncol=3) # root and leaf nodes, length
