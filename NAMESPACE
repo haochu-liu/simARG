@@ -2,6 +2,7 @@
 
 S3method(plot,ARG)
 export(ClonalOrigin_ARG_based)
+export(ClonalOrigin_seq_based)
 export(ClonalOrigin_tree_based)
 export(FSM_ARG)
 export(FSM_ARG.decimal)

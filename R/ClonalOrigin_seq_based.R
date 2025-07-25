@@ -11,9 +11,9 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_tree_based(100L, 5, 100L, 5)
-#' ARG2 <- ClonalOrigin_tree_based(5L, 1, 10L, 1)
-ClonalOrigin_tree_based <- function(n, rho, L, delta) {
+#' ARG1 <- ClonalOrigin_seq_based(100L, 5, 100L, 5)
+#' ARG2 <- ClonalOrigin_seq_based(5L, 1, 10L, 1)
+ClonalOrigin_seq_based <- function(n, rho, L, delta) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
