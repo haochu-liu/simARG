@@ -96,18 +96,6 @@ histClonal <- ggplot(height_df, aes(x = clonal, fill = type)) +
        y = "Density") +
   scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red")) +
   theme_minimal()
-histarg <- ggplot(height_df, aes(x = arg, fill = type)) +
-  geom_histogram(aes(y = after_stat(density)),
-                 bins = 30,
-                 color = "black",
-                 alpha = 0.3,
-                 position = "identity") +
-  labs(title = "Clonal tree",
-       x = "Height",
-       y = "Density") +
-  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red")) +
-  theme_minimal()
-
 
 
 local_height1 <- data.frame(height=c(height_df$s1[1:1000],

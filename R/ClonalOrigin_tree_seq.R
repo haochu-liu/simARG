@@ -135,6 +135,7 @@ ClonalOrigin_tree_seq <- function(n, rho_site, L, delta) {
     n_recomb <- n_recomb + R_new
   }
 
+  recomb_edge <- recomb_edge[1:n_recomb, ]
   # recombination segment and ancestral material
   node_max <- 2*n - 1 + 3*n_recomb
   edge_max <- 2*(n - 1) + 4*n_recomb
