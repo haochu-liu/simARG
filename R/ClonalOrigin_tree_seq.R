@@ -13,7 +13,7 @@
 #' @examples
 #' ARG1 <- ClonalOrigin_tree_seq(100L, 0.5, 100L, 5)
 #' ARG2 <- ClonalOrigin_tree_seq(5L, 1, 10L, 1)
-ClonalOrigin_tree_seq <- function(n, rho, L, delta) {
+ClonalOrigin_tree_seq <- function(n, rho_site, L, delta) {
   if (!rlang::is_integer(n, n=1)) {
     cli::cli_abort("`n` must be a single integer!")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -109,11 +109,11 @@ ClonalOrigin_tree_seq <- function(n, rho, L, delta) {
         i_above_b <- c(0, t_above_b[t_above_b >= 0])
         i_above_b <- i_above_b[2:length(i_above_b)] - i_above_b[1:(length(i_above_b)-1)]
         cuml_above_b <- cumsum(i_above_b * (1+length(i_above_b)):2)
-        num_lineage <- (1+length(i_above_b)) - length(which(a_rexp[i] > cuml_above_b))
+        num_lineage <- (1+length(i_above_b)) - length(which(a_rexp[j] > cuml_above_b))
         if (num_lineage == (1+length(i_above_b))) {
           recomb_edge[n_recomb+j, 4] <- a_rexp[j] / num_lineage + recomb_edge[n_recomb+j, 2]
         } else {
-          recomb_edge[n_recomb+j, 4] <- (a_rexp[i]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
+          recomb_edge[n_recomb+j, 4] <- (a_rexp[j]-cuml_above_b[1+length(i_above_b)-num_lineage]) / num_lineage +
             sum(i_above_b[1:(1+length(i_above_b)-num_lineage)]) +
             recomb_edge[n_recomb+j, 2]
         }

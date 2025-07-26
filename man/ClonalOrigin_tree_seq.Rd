@@ -4,16 +4,16 @@
 \alias{ClonalOrigin_tree_seq}
 \title{An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
 \usage{
-ClonalOrigin_tree_seq(n, rho, L, delta)
+ClonalOrigin_tree_seq(n, rho_site, L, delta)
 }
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
 
+\item{rho_site}{The recombination parameter per site.}
+
 \item{L}{An integer for the number of sites.}
 
 \item{delta}{numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.}
-
-\item{rho_site}{The recombination parameter per site.}
 }
 \value{
 A list containing clonal tree and recombination edges.
