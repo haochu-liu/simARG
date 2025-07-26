@@ -6,7 +6,7 @@
 \usage{
 ClonalOrigin_ARG_based(
   n,
-  rho,
+  rho_site,
   L,
   delta,
   node_max = 1000,
@@ -17,7 +17,7 @@ ClonalOrigin_ARG_based(
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
 
-\item{rho}{The recombination parameter.}
+\item{rho_site}{The recombination parameter per site.}
 
 \item{L}{An integer for the number of sites.}
 
@@ -37,6 +37,6 @@ Simulate coalescent an recombination events by ClonalOrigin algorithm.
 The non-clonal lineages are not allowed to either recombine or coalesce with each other.
 }
 \examples{
-ARG1 <- ClonalOrigin_ARG_based(100L, 5, 100L, 5)
+ARG1 <- ClonalOrigin_ARG_based(100L, 0.5, 100L, 5)
 ARG2 <- ClonalOrigin_ARG_based(5L, 1, 10L, 1, optimise_recomb=TRUE)
 }

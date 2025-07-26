@@ -4,12 +4,12 @@
 \alias{ClonalOrigin_tree_based}
 \title{An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
 \usage{
-ClonalOrigin_tree_based(n, rho, L, delta)
+ClonalOrigin_tree_based(n, rho_site, L, delta)
 }
 \arguments{
 \item{n}{An integer for the number of leaf lineages.}
 
-\item{rho}{The recombination parameter.}
+\item{rho_site}{The recombination parameter per site.}
 
 \item{L}{An integer for the number of sites.}
 
@@ -23,6 +23,6 @@ Simulate coalescent an recombination events by ClonalOrigin algorithm.
 Recombinations are added to a clonal tree to construct an ARG.
 }
 \examples{
-ARG1 <- ClonalOrigin_tree_based(100L, 5, 100L, 5)
+ARG1 <- ClonalOrigin_tree_based(100L, 0.5, 100L, 5)
 ARG2 <- ClonalOrigin_tree_based(5L, 1, 10L, 1)
 }
