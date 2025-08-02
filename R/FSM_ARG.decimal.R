@@ -30,6 +30,7 @@ FSM_ARG.decimal <- function(n, rho_site, L, bacteria=FALSE, delta=NULL, node_max
   } else if (clonal & (!bacteria)) {
     cli::cli_abort("Cannot consider clonal lineages for human gene!")
   }
+  mem_before <- mem_used()
 
   k = n
   k_vector <- c(k)
@@ -170,6 +171,9 @@ FSM_ARG.decimal <- function(n, rho_site, L, bacteria=FALSE, delta=NULL, node_max
       k <- k + 1
     }
     k_vector <- c(k_vector, k)
+    print(paste("node index:", node_index))
+    print(paste("used memory:", mem_used()-mem_before))
+    print("------------")
     if (max(edge_index, node_index) >= node_max - 1) {
       # add empty rows or elements if more edges than expected
       edge_matrix <- rbind(edge_matrix, matrix(NA, nrow=node_max, ncol=3))
