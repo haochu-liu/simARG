@@ -60,6 +60,7 @@ simbac_ARG <- function(n, rho_site, L, delta, node_max=1000, output_eff_R=FALSE,
   } else {
     include_site <- NULL
   }
+  edge_max <- node_max
 
   while (k > 1) {
     # sample a new event time
@@ -199,10 +200,14 @@ simbac_ARG <- function(n, rho_site, L, delta, node_max=1000, output_eff_R=FALSE,
       k <- k + 1
     }
     k_vector <- c(k_vector, k)
-    if (max(edge_index, node_index) >= node_max - 1) {
+    if (edge_index >= edge_max - 1) {
       # add empty rows or elements if more edges than expected
-      edge_matrix <- rbind(edge_matrix, matrix(NA, nrow=node_max, ncol=3))
-      edge_mat_index <- c(edge_mat_index, rep(NA, node_max))
+      edge_matrix <- rbind(edge_matrix, matrix(NA, nrow=edge_max, ncol=3))
+      edge_mat_index <- c(edge_mat_index, rep(NA, edge_max))
+      edge_max <- 2 * edge_max
+    }
+    if (node_index >= node_max - 1) {
+      # add empty rows or elements if more nodes than expected
       node_height <- c(node_height, rep(NA, node_max))
       node_mat <- rbind(node_mat, matrix(NA, nrow=node_max, ncol=L))
       node_eff_R <- rbind(node_eff_R, matrix(NA, nrow=node_max, ncol=2))

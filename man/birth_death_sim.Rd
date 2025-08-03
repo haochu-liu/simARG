@@ -15,7 +15,7 @@ birth_death_sim(n, rho)
 \item{rho}{The death rate.}
 }
 \value{
-Hitting time.
+Hitting time and number of jumps.
 }
 \description{
 Simulate a birth-death process and find its hitting time at boundary equals to 1.

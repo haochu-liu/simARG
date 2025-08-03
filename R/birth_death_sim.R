@@ -8,7 +8,7 @@
 #'
 #' @param n A single integer for initial value.
 #' @param rho The death rate.
-#' @return Hitting time.
+#' @return Hitting time and number of jumps.
 #' @export
 #'
 #' @examples
@@ -20,13 +20,16 @@ birth_death_sim <- function(n, rho) {
 
   t <- 0
   k <- n
+  num <- 0
   while (k > 1) {
     t <- t + rexp(1, rate=k*(k-1+rho)/2)
     if (runif(1) < (k - 1) / (k - 1 + rho)) {
       k <- k - 1
+      num <- num + 1
     } else {
       k <- k + 1
+      num <- num + 2
     }
   }
-  return(t)
+  return(list(t=t, n=num))
 }
