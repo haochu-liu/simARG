@@ -13,7 +13,7 @@
 #' ARG_mutation <- FSM_mutation(ARG, 2)
 FSM_mutation <- function(ARG, theta_site, binary=FALSE) {
   if (!inherits(ARG, "FSM_ARG")) {
-    stop("Object must be of class 'FSM_ARG'")
+    cli::cli_abort("Object must be of class 'FSM_ARG'")
   }
 
   theta <- theta_site * ARG$L
