@@ -4,12 +4,14 @@
 \alias{FSM_mutation}
 \title{Add mutations to a \code{FSM_ARG} object}
 \usage{
-FSM_mutation(ARG, theta)
+FSM_mutation(ARG, theta_site, binary = FALSE)
 }
 \arguments{
 \item{ARG}{A \code{FSM_ARG} object.}
 
-\item{theta}{The mutation rate.}
+\item{theta_site}{The mutation rate per site.}
+
+\item{binary}{boolean; If TRUE, return the incidence matrix of nodes, instead of sequences.}
 }
 \value{
 Add a mutation matrix and a genotype dataframe to the \code{FSM_ARG} object.
@@ -19,5 +21,5 @@ Add mutations uniformly onto the edges of ARG with infinite site assumption.
 }
 \examples{
 ARG <- FSM_ARG(20L, 1, 100L)
-ARG_mutation <- ISM_mutation(ARG, 2)
+ARG_mutation <- FSM_mutation(ARG, 2)
 }
