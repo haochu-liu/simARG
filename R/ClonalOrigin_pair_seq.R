@@ -13,50 +13,19 @@
 #' @examples
 #' ARG1 <- ClonalOrigin_pair_seq(tree, 0.5, 100L, 5, 20L)
 #' ARG2 <- ClonalOrigin_pair_seq(tree, 1, 10L, 1, 5L)
-ClonalOrigin_pair_seq <- function(n, rho_site, L, delta) {
-  if (!rlang::is_integer(n, n=1)) {
-    cli::cli_abort("`n` must be a single integer!")
+ClonalOrigin_pair_seq <- function(tree, rho_site, L, delta, k) {
+  if (!inherits(tree, "clonal_tree")) {
+    cli::cli_abort("Object must be of class 'clonal_tree'")
   } else if (!rlang::is_integer(L, n=1)) {
     cli::cli_abort("`L` must be a single integer!")
+  } else if (!rlang::is_integer(k, n=1)) {
+    cli::cli_abort("`k` must be a single integer!")
   }
 
-  k = n
-  t_sum <- 0
   rho <- L * rho_site
-
-  # Initialize varables for clonal tree
-  clonal_edge <- matrix(NA, nrow=2*(n-1), ncol=3) # root and leaf nodes, length
-  colnames(clonal_edge) <- c("node1", "node2", "length")
-  clonal_node_height <- rep(NA, 2*n-1)            # node height to recent time
-  clonal_node_height[1:n] <- 0                    # initialize first n nodes
-
-  # Initialize variables and vector
-  edge_index <- 1L
-  node_index <- as.integer(n + 1)
-  pool <- as.integer(1:n)
-
-  # clonal tree by coalescent only
-  while (k > 1) {
-    # sample a new event time
-    event_time <- rexp(1, rate=k*(k-1)/2)
-    t_sum <- t_sum + event_time
-    # coalescent event
-    leaf_node <- sample(pool, size=2, replace=FALSE)
-
-    # append edges
-    clonal_edge[c(edge_index, edge_index+1), 1] <- node_index
-    clonal_edge[c(edge_index, edge_index+1), 2] <- leaf_node
-    clonal_edge[c(edge_index, edge_index+1), 3] <- t_sum-clonal_node_height[leaf_node]
-
-    # append root node
-    clonal_node_height[node_index] <- t_sum
-
-    # updates for iteration
-    pool <- c(setdiff(pool, leaf_node), node_index)
-    edge_index <- edge_index + 2L
-    node_index <- node_index + 1L
-    k <- k - 1
-  }
+  clonal_edge <- tree$edge
+  clonal_node_height <- tree$node
+  n <- tree$n
 
   # number of recombination edges
   tree_length <- sum(clonal_edge[, 3])
@@ -70,15 +39,16 @@ ClonalOrigin_pair_seq <- function(n, rho_site, L, delta) {
 
   # Add recombination sequentially
   n_recomb <- 0
-  for (i in 1:L) {
+  for (i in 1:2) {
     if (i == 1) {
-      R_new <- rpois(1, rho_s*delta*tree_length/2)
+      R_new <- rpois(1, rho_site*delta*tree_length/2)
       R_old <- 0
-    } else {
-      survive_index <- which(recomb_edge[1:n_recomb, 6] == (i-1))
-      R_new <- rpois(1, rho_s*tree_length/2)
+    } else { # i == 2
+      survive_index <- which(recomb_edge[1:n_recomb, 6] == 1)
+      delta2 <- sum((1 - 1/delta)^c(0:(k-1)))
+      R_new <- rpois(1, rho_site*delta2*tree_length/2)
       if (length(survive_index) >= 0) {
-        R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
+        R_old <- rbinom(1, length(survive_index), (1 - 1/delta)^k)
         if (length(survive_index) == 1) {
           remain_index <- survive_index
         } else {
@@ -142,7 +112,7 @@ ClonalOrigin_pair_seq <- function(n, rho_site, L, delta) {
   edge_matrix <- matrix(NA, nrow=edge_max, ncol=3) # root and leaf nodes, length
   colnames(edge_matrix) <- c("node1", "node2", "length")
   edge_mat_index <- rep(NA, edge_max)              # edge material index
-  node_mat <- matrix(NA, nrow=node_max, ncol=L)
+  node_mat <- matrix(NA, nrow=node_max, ncol=2)
   node_info <- matrix(NA, nrow=node_max, ncol=4)
   colnames(node_info) <- c("index", "height", "recomb", "clonal")
   node_mat[1:n, ] <- TRUE

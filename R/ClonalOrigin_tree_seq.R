@@ -72,11 +72,11 @@ ClonalOrigin_tree_seq <- function(n, rho_site, L, delta) {
   n_recomb <- 0
   for (i in 1:L) {
     if (i == 1) {
-      R_new <- rpois(1, rho_s*delta*tree_length/2)
+      R_new <- rpois(1, rho_site*delta*tree_length/2)
       R_old <- 0
     } else {
       survive_index <- which(recomb_edge[1:n_recomb, 6] == (i-1))
-      R_new <- rpois(1, rho_s*tree_length/2)
+      R_new <- rpois(1, rho_site*tree_length/2)
       if (length(survive_index) >= 0) {
         R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
         if (length(survive_index) == 1) {
