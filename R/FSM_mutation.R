@@ -16,7 +16,7 @@ FSM_mutation <- function(ARG, theta_site, binary=FALSE) {
     cli::cli_abort("Object must be of class 'FSM_ARG'")
   }
 
-  theta <- theta_site * ARG$L
+  theta <- theta_site * ncol(ARG$node_mat)
   l <- sum(ARG$edge[, 3])
   n <- rpois(1, theta*l/2) # num of mutations | l ~ Poisson(theta*l/2)
   ARG$mutation <- matrix(NA, nrow=n, ncol=3)

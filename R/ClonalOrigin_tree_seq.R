@@ -134,8 +134,22 @@ ClonalOrigin_tree_seq <- function(n, rho_site, L, delta) {
 
     n_recomb <- n_recomb + R_new
   }
+  if (n_recomb == 0) {
+    node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=L)
+    edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=L)
+    ARG = list(edge=clonal_edge,
+               edge_mat=edge_mat,
+               node_height=clonal_node_height,
+               node_mat=node_mat,
+               node_clonal=rep(TRUE, (2*n-1)),
+               sum_time=max(clonal_node_height),
+               n=n, rho=rho, L=L, delta=delta)
+    class(ARG) <- "FSM_ARG"
+    return(ARG)
+  } else {
+    recomb_edge <- recomb_edge[1:n_recomb, , drop = FALSE]
+  }
 
-  recomb_edge <- recomb_edge[1:n_recomb, ]
   # recombination segment and ancestral material
   node_max <- 2*n - 1 + 3*n_recomb
   edge_max <- 2*(n - 1) + 4*n_recomb

@@ -51,7 +51,8 @@ for (i in 1:nrow(df_s50)) {
   df_s50$g3[i] <- G3_test(mat)
   df_s50$s[i] <- 1 - exp(-(theta_site * height1) / 2)
 
-  if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
+  # if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
+  print(paste("Complete", i, "iterations"))
 }
 
 
