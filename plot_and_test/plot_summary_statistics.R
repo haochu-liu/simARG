@@ -3,30 +3,30 @@ library(patchwork)
 
 
 tree <- clonal_genealogy(15L)
-rho_seq <- seq(from=0, to=0.4, length.out=2001)
-delta_seq <- seq(from=0, to=4000, length.out=2001)
-theta_seq <- seq(from=0, to=0.3, length.out=2001)
-df_s50 <- data.frame(r=rep(NA, 2001*3),
-                     g3=rep(NA, 2001*3),
-                     s=rep(NA, 2001*3),
+rho_seq <- seq(from=0, to=0.4, length.out=201)
+delta_seq <- seq(from=20, to=4020, length.out=201)
+theta_seq <- seq(from=0, to=0.3, length.out=201)
+df_s50 <- data.frame(r=rep(NA, 201*3),
+                     g3=rep(NA, 201*3),
+                     s=rep(NA, 201*3),
                      x=c(rho_seq, delta_seq, theta_seq),
-                     type=c(rep("rho", 2001),
-                            rep("delta", 2001),
-                            rep("theta", 2001)))
-df_s200 <- data.frame(r=rep(NA, 2001*3),
-                      g3=rep(NA, 2001*3),
-                      s=rep(NA, 2001*3),
+                     type=c(rep("rho", 201),
+                            rep("delta", 201),
+                            rep("theta", 201)))
+df_s200 <- data.frame(r=rep(NA, 201*3),
+                      g3=rep(NA, 201*3),
+                      s=rep(NA, 201*3),
                       x=c(rho_seq, delta_seq, theta_seq),
-                      type=c(rep("rho", 2001),
-                             rep("delta", 2001),
-                             rep("theta", 2001)))
-df_s2000 <- data.frame(r=rep(NA, 2001*3),
-                       g3=rep(NA, 2001*3),
-                       s=rep(NA, 2001*3),
+                      type=c(rep("rho", 201),
+                             rep("delta", 201),
+                             rep("theta", 201)))
+df_s2000 <- data.frame(r=rep(NA, 201*3),
+                       g3=rep(NA, 201*3),
+                       s=rep(NA, 201*3),
                        x=c(rho_seq, delta_seq, theta_seq),
-                       type=c(rep("rho", 2001),
-                              rep("delta", 2001),
-                              rep("theta", 2001)))
+                       type=c(rep("rho", 201),
+                              rep("delta", 201),
+                              rep("theta", 201)))
 
 
 # k = 50

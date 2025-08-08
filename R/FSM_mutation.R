@@ -44,7 +44,7 @@ FSM_mutation <- function(ARG, theta_site, binary=FALSE) {
   }
   mutate_edge <- mutate_edge[keep_mutation]
   mutate_site <- mutate_site[keep_mutation]
-  ARG$mutation <- ARG$mutation[keep_mutation, ]
+  ARG$mutation <- ARG$mutation[keep_mutation, , drop = FALSE]
   if (!length(keep_mutation)) {return(ARG)}
 
   # dataframe mutations to store information of mutations

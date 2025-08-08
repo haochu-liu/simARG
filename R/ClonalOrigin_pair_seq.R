@@ -20,6 +20,8 @@ ClonalOrigin_pair_seq <- function(tree, rho_site, L, delta, k) {
     cli::cli_abort("`L` must be a single integer!")
   } else if (!rlang::is_integer(k, n=1)) {
     cli::cli_abort("`k` must be a single integer!")
+  } else if (delta <= 0) {
+    cli::cli_abort("`delta` must be greater than zero!")
   }
 
   rho <- L * rho_site

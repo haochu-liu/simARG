@@ -24,7 +24,7 @@ LD_r <- function(mat) {
   n_AB <- sum(mat[, 1] & mat[, 2])
 
   D_AB <- n_AB / n - (n_A * n_B) / (n^2)
-  r_square <- D_AB^2 * n^4 / (n_A * n_a * n_B * n_b)
+  r_square <- D_AB^2 * n^4 / (n_A * n_a * n_B * n_b + .Machine$double.eps)
 
   return(r_square)
 }
