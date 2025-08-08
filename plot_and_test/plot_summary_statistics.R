@@ -41,18 +41,27 @@ for (i in 1:nrow(df_s50)) {
   } else if (df_s50$type[i] == "theta") {
     theta_site <- df_s50$x[i]
   }
-  ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 50L)
-  ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
-  mat <- ARG_mutated$node_site[1:15, ]
-  tree1 <- local_tree(ARG, 1L)
-  height1 <- tree1$sum_time
 
-  df_s50$r[i] <- LD_r(mat)
-  df_s50$g3[i] <- G3_test(mat)
-  df_s50$s[i] <- 1 - exp(-(theta_site * height1) / 2)
+  v_LD <- rep(NA, 100)
+  v_G3 <- rep(NA, 100)
+  v_s <- rep(NA, 100)
+  for (j in 1:100) {
+    ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 50L)
+    ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
+    mat <- ARG_mutated$node_site[1:15, ]
+    tree1 <- local_tree(ARG, 1L)
+    length1 <- sum(tree1$edge[, 3])
 
-  # if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
-  print(paste("Complete", i, "iterations"))
+    v_LD[j] <- LD_r(mat)
+    v_G3[j] <- G3_test(mat)
+    v_s[j] <- 1 - exp(-(theta_site * length1) / 2)
+  }
+
+  df_s50$r[i] <- mean(v_LD)
+  df_s50$g3[i] <- mean(v_G3)
+  df_s50$s[i] <- mean(v_s)
+
+  if (i%%20 == 0) {print(paste("Complete", i, "iterations"))}
 }
 
 
