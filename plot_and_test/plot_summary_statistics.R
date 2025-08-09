@@ -33,7 +33,7 @@ df_s2000 <- data.frame(r=rep(NA, 201*3),
 for (i in 1:nrow(df_s50)) {
   rho_site <- 0.02
   delta <- 300
-  theta_site <- 0.05
+  theta_site <- 0.1
   if (df_s50$type[i] == "rho") {
     rho_site <- df_s50$x[i]
   } else if (df_s50$type[i] == "delta") {
