@@ -63,7 +63,7 @@ ClonalOrigin_pair_seq <- function(tree, rho_site, L, delta, k) {
 
     if (R_new > 0) {
       if (n_recomb+R_new >= nrow_max) {
-        recomb_edge <- rbind(recomb_edge, matrix(NA, nrow=node_max, ncol=6))
+        recomb_edge <- rbind(recomb_edge, matrix(NA, nrow=nrow_max, ncol=6))
         nrow_max <- 2 * nrow_max
       }
 
