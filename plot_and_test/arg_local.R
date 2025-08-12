@@ -16,12 +16,13 @@ for (i in 1:1000) {
 
 
 plot_df <- data.frame(y=c(height_df$local, height_df$arg),
-                      type=c(rep("Local tree", 1000), rep("ARG", 1000)))
-ggplot(plot_df, aes(x=type, y=y)) +
-  geom_violin() +
-  labs(title = "# of leaf lineages = 100, rho = 5",
+                      graph=c(rep("Local tree", 1000), rep("ARG", 1000)))
+ggplot(plot_df, aes(x=graph, y=y, fill=graph)) +
+  geom_violin(width=0.8, alpha=0.5) +
+  geom_boxplot(width=0.1, color="black", alpha=0.2) +
+  labs(title = "Graph heights for ARGs and local trees at site 1",
        x = "",
-       y = "Graph height") +
+       y = "Height") +
   theme_minimal() +
   theme(
     plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
