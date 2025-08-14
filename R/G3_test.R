@@ -19,6 +19,10 @@ G3_test <- function(mat) {
   num10 <- sum(mat[, 1] & !mat[, 2])
   num11 <- sum(mat[, 1] & mat[, 2])
 
-  n_G3 <- num01 * num10 * num11
-  return(n_G3)
+  num_logical <- as.logical(c(num01, num10, num11))
+  if (all(num_logical)) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
 }

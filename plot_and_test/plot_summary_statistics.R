@@ -3,37 +3,37 @@ library(patchwork)
 
 
 tree <- clonal_genealogy(15L)
-rho_seq <- seq(from=0, to=0.4, length.out=2001)
-delta_seq <- seq(from=20, to=4020, length.out=2001)
-theta_seq <- seq(from=0.2, to=1.2, length.out=2001)
-df_s50 <- data.frame(r=rep(NA, 2001*3),
-                     g3=rep(NA, 2001*3),
-                     s=rep(NA, 2001*3),
+rho_seq <- seq(from=0, to=0.4, length.out=1001)
+delta_seq <- seq(from=4, to=4004, length.out=1001)
+theta_seq <- seq(from=0, to=0.3, length.out=1001)
+df_s50 <- data.frame(r=rep(NA, 1001*3),
+                     g3=rep(NA, 1001*3),
+                     s=rep(NA, 1001*3),
                      x=c(rho_seq, delta_seq, theta_seq),
-                     type=c(rep("rho", 2001),
-                            rep("delta", 2001),
-                            rep("theta", 2001)))
-df_s200 <- data.frame(r=rep(NA, 2001*3),
-                      g3=rep(NA, 2001*3),
-                      s=rep(NA, 2001*3),
+                     type=c(rep("rho", 1001),
+                            rep("delta", 1001),
+                            rep("theta", 1001)))
+df_s200 <- data.frame(r=rep(NA, 1001*3),
+                      g3=rep(NA, 1001*3),
+                      s=rep(NA, 1001*3),
                       x=c(rho_seq, delta_seq, theta_seq),
-                      type=c(rep("rho", 2001),
-                             rep("delta", 2001),
-                             rep("theta", 2001)))
-df_s2000 <- data.frame(r=rep(NA, 2001*3),
-                       g3=rep(NA, 2001*3),
-                       s=rep(NA, 2001*3),
+                      type=c(rep("rho", 1001),
+                             rep("delta", 1001),
+                             rep("theta", 1001)))
+df_s2000 <- data.frame(r=rep(NA, 1001*3),
+                       g3=rep(NA, 1001*3),
+                       s=rep(NA, 1001*3),
                        x=c(rho_seq, delta_seq, theta_seq),
-                       type=c(rep("rho", 2001),
-                              rep("delta", 2001),
-                              rep("theta", 2001)))
+                       type=c(rep("rho", 1001),
+                              rep("delta", 1001),
+                              rep("theta", 1001)))
 
 
 # k = 50
 for (i in 1:nrow(df_s50)) {
   rho_site <- 0.02
   delta <- 300
-  theta_site <- 0.5
+  theta_site <- 0.05
   if (df_s50$type[i] == "rho") {
     rho_site <- df_s50$x[i]
   } else if (df_s50$type[i] == "delta") {
@@ -42,17 +42,25 @@ for (i in 1:nrow(df_s50)) {
     theta_site <- df_s50$x[i]
   }
 
-  ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 50L)
-  ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
-  mat <- ARG_mutated$node_site[1:15, ]
-  tree1 <- local_tree(ARG, 1L)
-  length1 <- sum(tree1$edge[, 3])
+  v_r <- rep(NA, 2000)
+  v_g3 <- rep(NA, 2000)
+  v_s <- rep(NA, 2000)
 
-  df_s50$r[i] <- LD_r(mat)
-  df_s50$g3[i] <- G3_test(mat)
-  df_s50$s[i] <- 1 - exp(-(theta_site * length1) / 2)
+  for (j in 1:2000) {
+    ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 50L)
+    ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
+    mat <- ARG_mutated$node_site[1:15, ]
 
-  if (i%%20 == 0) {print(paste("Complete", i, "iterations"))}
+    v_r[j] <- LD_r(mat)
+    v_g3[j] <- G3_test(mat)
+    v_s[j] <- any(as.logical(mat[, 1]))
+  }
+
+  df_s50$r[i] <- mean(v_r)
+  df_s50$g3[i] <- mean(v_g3)
+  df_s50$s[i] <- mean(v_s)
+
+  if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
 }
 
 # k = 200
@@ -68,17 +76,25 @@ for (i in 1:nrow(df_s200)) {
     theta_site <- df_s200$x[i]
   }
 
-  ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 200L)
-  ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
-  mat <- ARG_mutated$node_site[1:15, ]
-  tree1 <- local_tree(ARG, 1L)
-  length1 <- sum(tree1$edge[, 3])
+  v_r <- rep(NA, 2000)
+  v_g3 <- rep(NA, 2000)
+  v_s <- rep(NA, 2000)
 
-  df_s200$r[i] <- LD_r(mat)
-  df_s200$g3[i] <- G3_test(mat)
-  df_s200$s[i] <- 1 - exp(-(theta_site * length1) / 2)
+  for (j in 1:2000) {
+    ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 200L)
+    ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
+    mat <- ARG_mutated$node_site[1:15, ]
 
-  if (i%%20 == 0) {print(paste("Complete", i, "iterations"))}
+    v_r[j] <- LD_r(mat)
+    v_g3[j] <- G3_test(mat)
+    v_s[j] <- any(as.logical(mat[, 1]))
+  }
+
+  df_s200$r[i] <- mean(v_r)
+  df_s200$g3[i] <- mean(v_g3)
+  df_s200$s[i] <- mean(v_s)
+
+  if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
 }
 
 # k = 2000
@@ -94,17 +110,25 @@ for (i in 1:nrow(df_s2000)) {
     theta_site <- df_s2000$x[i]
   }
 
-  ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 2000L)
-  ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
-  mat <- ARG_mutated$node_site[1:15, ]
-  tree1 <- local_tree(ARG, 1L)
-  length1 <- sum(tree1$edge[, 3])
+  v_r <- rep(NA, 2000)
+  v_g3 <- rep(NA, 2000)
+  v_s <- rep(NA, 2000)
 
-  df_s2000$r[i] <- LD_r(mat)
-  df_s2000$g3[i] <- G3_test(mat)
-  df_s2000$s[i] <- 1 - exp(-(theta_site * length1) / 2)
+  for (j in 1:2000) {
+    ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, 2000L)
+    ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
+    mat <- ARG_mutated$node_site[1:15, ]
 
-  if (i%%20 == 0) {print(paste("Complete", i, "iterations"))}
+    v_r[j] <- LD_r(mat)
+    v_g3[j] <- G3_test(mat)
+    v_s[j] <- any(as.logical(mat[, 1]))
+  }
+
+  df_s2000$r[i] <- mean(v_r)
+  df_s2000$g3[i] <- mean(v_g3)
+  df_s2000$s[i] <- mean(v_s)
+
+  if (i%%100 == 0) {print(paste("Complete", i, "iterations"))}
 }
 
 

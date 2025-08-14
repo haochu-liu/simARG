@@ -6,7 +6,7 @@
 #' @param location The site location for local tree.
 #' @return `localtree` object; Local tree at a chosen site.
 local_tree_FSM <- function(ARG, location) {
-  keep_edge <- which(ARG$edge_mat[, location])
+  keep_edge <- which(as.logical(ARG$edge_mat[, location]))
   edge_index <- 1:nrow(ARG$edge)
 
   ARG$edge <- ARG$edge[keep_edge, ]
