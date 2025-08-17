@@ -1,5 +1,6 @@
 library(ggplot2)
 library(sdprisk)
+library(patchwork)
 set.seed(13)
 
 
@@ -8,9 +9,9 @@ height_df <- data.frame(s1=rep(NA, 3000),
                         s80=rep(NA, 3000),
                         arg=rep(NA, 3000),
                         clonal=rep(NA, 3000),
-                        type=c(rep("ARG-based", 1000),
-                               rep("Tree-based", 1000),
-                               rep("Tree-seq", 1000)))
+                        method=c(rep("ARG-based", 1000),
+                                 rep("Tree-based", 1000),
+                                 rep("Seq", 1000)))
 
 for (i in 1:1000) {
   ARG <- ClonalOrigin_ARG_based(100L, 0.1, 100L, 30, optimise_recomb=TRUE)
@@ -52,7 +53,7 @@ height_density <- function(x) {
   dhypoexp(x, rate=height_rate)
 }
 
-hist1 <- ggplot(height_df, aes(x = s1, fill = type)) +
+hist1 <- ggplot(height_df, aes(x = s1, fill = method)) +
   geom_histogram(aes(y = after_stat(density)),
                  bins = 30,
                  color = "black",
@@ -65,9 +66,10 @@ hist1 <- ggplot(height_df, aes(x = s1, fill = type)) +
   labs(title = "Local tree at site 1",
        x = "Height",
        y = "Density") +
-  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Tree-seq"="green")) +
-  theme_minimal()
-hist2 <- ggplot(height_df, aes(x = s50, fill = type)) +
+  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Seq"="green")) +
+  theme_minimal() +
+  theme(legend.position = "right")
+hist2 <- ggplot(height_df, aes(x = s50, fill = method)) +
   geom_histogram(aes(y = after_stat(density)),
                  bins = 30,
                  color = "black",
@@ -80,9 +82,10 @@ hist2 <- ggplot(height_df, aes(x = s50, fill = type)) +
   labs(title = "Local tree at site 50",
        x = "Height",
        y = "Density") +
-  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Tree-seq"="green")) +
-  theme_minimal()
-hist3 <- ggplot(height_df, aes(x = s80, fill = type)) +
+  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Seq"="green")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+hist3 <- ggplot(height_df, aes(x = s80, fill = method)) +
   geom_histogram(aes(y = after_stat(density)),
                  bins = 30,
                  color = "black",
@@ -95,8 +98,16 @@ hist3 <- ggplot(height_df, aes(x = s80, fill = type)) +
   labs(title = "Local tree at site 80",
        x = "Height",
        y = "Density") +
-  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Tree-seq"="green")) +
-  theme_minimal()
+  scale_fill_manual(values = c("ARG-based"="blue", "Tree-based"="red", "Seq"="green")) +
+  theme_minimal() +
+  theme(legend.position = "none")
+combined_hist <- hist1 + hist2 + hist3
+combined_hist <- combined_hist +
+  plot_annotation(title = "Local tree heights for ClonalOrigin model") +
+  plot_layout(guides = "collect")
+print(combined_hist)
+
+
 histClonal <- ggplot(height_df, aes(x = clonal, fill = type)) +
   geom_histogram(aes(y = after_stat(density)),
                  bins = 30,
