@@ -10,10 +10,10 @@ G3_test(mat)
 \item{mat}{An incidence matrix with two columns.}
 }
 \value{
-proportion of combinations.
+Number of combinations.
 }
 \description{
-Compute the proportion of combinations that have patterns 01, 10, 11.
+Compute the number of combinations that have patterns 01, 10, 11.
 }
 \examples{
 r_square <- G3_test(mat)

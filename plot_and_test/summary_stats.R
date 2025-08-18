@@ -5,6 +5,9 @@ library(ape)
 
 
 # load df_s50, df_s200, df_s2000
+df_s50$k <- "50"
+df_s200$k <- "200"
+df_s2000$k <- "2000"
 
 df_r <- rbind(df_s50[, c(1, 4, 5, 6)], df_s200[, c(1, 4, 5, 6)])
 df_r <- rbind(df_r, df_s2000[, c(1, 4, 5, 6)])
@@ -111,7 +114,7 @@ plot_s_theta <- ggplot(subset(df_s, type=="theta"), aes(x=x, y=s, color=k)) +
         axis.title.y = element_blank())
 
 
-combined_hist <- (plot_g_rho | plot_g_delta | plot_g_theta) /
+combined_hist <- (plot_r_rho | plot_r_delta | plot_r_theta) /
   (plot_g_rho | plot_g_delta | plot_g_theta) /
   (plot_s_rho | plot_s_delta | plot_s_theta)
 combined_hist <- combined_hist +
