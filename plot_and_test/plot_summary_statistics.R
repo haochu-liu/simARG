@@ -67,7 +67,7 @@ for (i in 1:nrow(df_s50)) {
 for (i in 1:nrow(df_s200)) {
   rho_site <- 0.02
   delta <- 300
-  theta_site <- 0.5
+  theta_site <- 0.05
   if (df_s200$type[i] == "rho") {
     rho_site <- df_s200$x[i]
   } else if (df_s200$type[i] == "delta") {
@@ -101,7 +101,7 @@ for (i in 1:nrow(df_s200)) {
 for (i in 1:nrow(df_s2000)) {
   rho_site <- 0.02
   delta <- 300
-  theta_site <- 0.5
+  theta_site <- 0.05
   if (df_s2000$type[i] == "rho") {
     rho_site <- df_s2000$x[i]
   } else if (df_s2000$type[i] == "delta") {
