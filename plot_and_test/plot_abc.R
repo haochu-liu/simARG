@@ -31,7 +31,7 @@ hist(matrix_list$theta_matrix[5000:10001, ], probability = TRUE, main = "Histogr
 abline(v = s_obs, col = "red", lwd = 2, lty = 2)
 # trace plot
 df <- data.frame(x = 1:10001,
-                 y = matrix_list$theta_matrix[, 1])
+                 y = matrix_list$theta_matrix[, 2])
 ggplot(df, aes(x = x, y = y)) +
   geom_line()
 
