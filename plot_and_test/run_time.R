@@ -3,13 +3,13 @@ library(patchwork)
 library(sdprisk)
 
 
-rho_values <- seq(5, 40, by = 5)
+rho_values <- seq(5, 35, by = 5)
 opt <- c("Basic",
          "Rejection",
          "SimBac")
 time_df <- expand.grid(
   t = NA,
-  rho_site = rho_values / 100,
+  rho_site = rho_values / 1e5,
   opt = opt
 )
 
@@ -23,7 +23,7 @@ for (i in 1:nrow(time_df)) {
   if (opt_str == "Rejection") {
     for (j in 1:10) {
       time_result <- system.time(
-        sim_FSM_ARG(n, rho_site, 100L, bacteria = TRUE, delta = delta,
+        sim_FSM_ARG(n, rho_site, 1e5L, bacteria = TRUE, delta = delta,
                     node_max = 1000, optimise_recomb = TRUE)
       )
       time_vec[j] <- time_result["elapsed"]
@@ -32,7 +32,7 @@ for (i in 1:nrow(time_df)) {
     if (rho_site * 100 > 10) {next}
     for (j in 1:10) {
       time_result <- system.time(
-        sim_FSM_ARG(n, rho_site, 100L, bacteria = TRUE, delta = delta,
+        sim_FSM_ARG(n, rho_site, 1e5L, bacteria = TRUE, delta = delta,
                     node_max = 1000, optimise_recomb = FALSE)
       )
       time_vec[j] <- time_result["elapsed"]
@@ -40,7 +40,7 @@ for (i in 1:nrow(time_df)) {
   } else if (opt_str == "SimBac") {
     for (j in 1:10) {
       time_result <- system.time(
-        simbac_ARG(n, rho_site, 100L, delta, node_max = 1000)
+        simbac_ARG(n, rho_site, 1e5L, delta, node_max = 1000)
       )
       time_vec[j] <- time_result["elapsed"]
     }
