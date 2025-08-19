@@ -1,23 +1,20 @@
-#' ABC-MCMC
+#' Adaptive ABC-MCMC
 #'
-#' Run ABC-MCMC by given proposal and prior.
+#' Run ABC-MCMC with adaptive Metropolis algorithm.
 #'
 #' @param obs The vector of observed data point.
 #' @param tol A positive numeric value for the tolerance.
 #' @param kernel_func A kernel function.
-#' @param p_theta A function to provide sampled theta from proposal.
-#' @param d_theta A function to provide the log density of proposal.
 #' @param p_s A function to provide the sampled summary statistics by given parameters.
 #' @param prior A function to provide the log density of prior.
 #' @param theta_0 Initial theta from the prior.
+#' @param n_adapt Number of initial period.
 #' @param n_iter Number of iterations.
 #' @param sigma The covariance matrix.
 #' @return Function value.
 #' @export
 abc_mcmc <- function(obs, tol, kernel_func, p_theta, d_theta, p_s, prior,
-                     theta_0, n_iter, sigma=NULL) {
-  if (is.null(sigma)) {sigma=diag(rep(1, length(obs)))}
-
+                     theta_0, n_adapt, n_iter, sigma_0) {
   theta_matrix <- matrix(NA, nrow=(n_iter+1), ncol=length(theta_0))
   s_matrix <- matrix(NA, nrow=(n_iter+1), ncol=length(obs))
   accept_vec <- rep(FALSE, n_iter+1)
