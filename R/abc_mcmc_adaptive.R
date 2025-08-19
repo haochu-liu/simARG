@@ -8,14 +8,15 @@
 #' @param p_s A function to provide the sampled summary statistics by given parameters.
 #' @param prior A function to provide the log density of prior.
 #' @param theta_0 Initial theta from the prior.
+#' @param s_0 A matrix of the initial summary statistics.
 #' @param n_adapt Number of initial period.
 #' @param n_iter Number of iterations.
 #' @param sigma_0 The covariance matrix for initial period.
 #' @param sigma_epi Term to control the noise.
 #' @return Function value.
 #' @export
-abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_theta, d_theta, p_s, prior,
-                              theta_0, n_adapt, n_iter, sigma_0, sigma_epi) {
+abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
+                              theta_0, s_0, n_adapt, n_iter, sigma_0, sigma_epi) {
   d <- length(theta_0)
   # Variables for output
   theta_matrix <- matrix(NA, nrow=(n_iter+1), ncol=d)
@@ -23,7 +24,6 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_theta, d_theta, p_s, prio
   accept_vec <- rep(FALSE, n_iter+1)
 
   # Initialization
-  s_0 <- as.vector(p_s(theta_0))
   k_0 <- kernel_func(obs, s_0, tol, sigma_0)
 
   theta_matrix[1, ] <- theta_0

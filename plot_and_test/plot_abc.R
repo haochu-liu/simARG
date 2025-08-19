@@ -36,6 +36,16 @@ ggplot(df, aes(x = x, y = y)) +
   geom_line()
 
 
-
-
+# ABC-MCMC
+matrix_list <- abc_mcmc_adaptive(c(s_obs), 1, gaussian_kernel, p_s, prior, mu_0, s_0, 100, 1000, diag(2), 0.1)
+# hist of posterior
+hist(matrix_list$theta_matrix[100:1001, ], probability = TRUE, main = "Histogram of mu|s_obs",
+     breaks = 20, col = "gray", border = "black", xlab="mu")
+abline(v = s_obs, col = "red", lwd = 2, lty = 2)
+# trace plot
+df <- data.frame(x = 1:1001,
+                 y = matrix_list$theta_matrix[, 2])
+ggplot(df, aes(x = x, y = y)) +
+  geom_line()
+mean(matrix_list$accept_vec)
 

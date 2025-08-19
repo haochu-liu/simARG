@@ -8,11 +8,10 @@ abc_mcmc_adaptive(
   obs,
   tol,
   kernel_func,
-  p_theta,
-  d_theta,
   p_s,
   prior,
   theta_0,
+  s_0,
   n_adapt,
   n_iter,
   sigma_0,
@@ -31,6 +30,8 @@ abc_mcmc_adaptive(
 \item{prior}{A function to provide the log density of prior.}
 
 \item{theta_0}{Initial theta from the prior.}
+
+\item{s_0}{A matrix of the initial summary statistics.}
 
 \item{n_adapt}{Number of initial period.}
 

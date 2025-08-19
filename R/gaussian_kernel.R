@@ -17,6 +17,8 @@ gaussian_kernel <- function(y, z, tol=1, sigma, log.kernel=TRUE) {
   d <- as.matrix(y - z)
   u <- sqrt(t(d) %*% solve(sigma) %*% d) / tol
   if (log.kernel) {
-    return(dnorm(u, log=TRUE) - dnorm(0, log=TRUE))
-  } else {dnorm(u, log=FALSE) / dnorm(0, log=FALSE)}
+    return(dnorm(u, log=TRUE))
+  } else {
+    return(dnorm(u, log=FALSE))
+  }
 }
