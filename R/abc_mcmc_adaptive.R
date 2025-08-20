@@ -48,7 +48,7 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
   s_d <- 2.38^2 / d
   mean_old <- as.matrix(colMeans(theta_matrix[1:n_adapt, ]))
   cov_sigma <- s_d*cov(theta_matrix[1:n_adapt, ]) + s_d * sigma_epi * diag(d)
-  for (i in (n_adapt+1):(n_iter+1)){
+  for (i in (n_adapt+1):(n_iter+1)) {
     theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
     s_1 <- as.vector(p_s(theta_1))
     k_1 <- kernel_func(obs, s_1, tol, cov_sigma)
@@ -63,11 +63,11 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
     theta_matrix[i, ] <- theta_0
     s_matrix[i, ] <- s_0
 
-    m_theta <- as.matrix(theta_0)
+    m_theta <- as.matrix(theta_0, )
     mean_new <- mean_old*(i-1)/i + m_theta/i
     cov_sigma <- cov_sigma * (i-1) / i +
       s_d / i * (i * mean_old %*% t(mean_old) -
-                   (i-1) * mean_new %*% t(mean_new) +
+                   (i+1) * mean_new %*% t(mean_new) +
                    m_theta %*% t(m_theta) +
                    sigma_epi * diag(d))
   }

@@ -36,8 +36,16 @@ ggplot(df, aes(x = x, y = y)) +
   geom_line()
 
 
-# ABC-MCMC
-matrix_list <- abc_mcmc_adaptive(c(s_obs), 1, gaussian_kernel, p_s, prior, mu_0, s_0, 100, 1000, diag(2), 0.1)
+# adaptive ABC-MCMC
+repeat {
+  mu_0 <- rmvnorm(n=1, mean=c(0, 0), sigma=diag(c(10, 10)))
+  s_0 <- as.vector(p_s(mu_0))
+
+  k_0 <- gaussian_kernel(c(s_obs), s_0, 1, diag(2))
+  if (exp(k_0) > .Machine$double.eps) {break}
+}
+mu_0 <- as.vector(mu_0)
+matrix_list <- abc_mcmc_adaptive(c(s_obs), 1, gaussian_kernel, p_s, prior, mu_0, s_0, 100, 1000, diag(2), 0)
 # hist of posterior
 hist(matrix_list$theta_matrix[100:1001, ], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
