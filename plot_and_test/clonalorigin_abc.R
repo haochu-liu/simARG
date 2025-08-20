@@ -91,15 +91,15 @@ abc_mat <- abc_mcmc_adaptive(s_obs, tol, gaussian_kernel, p_s, prior,
                              sigma_s, sigma_0, 0)
 
 # hist of posterior
-hist(abc_mat$theta_matrix[200:1001, 1], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[200:1001, 3], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
 # trace plot
 df <- data.frame(x = 1:1001,
-                 y = matrix_list$theta_matrix[, 2])
+                 y = abc_mat$theta_matrix[, 3])
 ggplot(df, aes(x = x, y = y)) +
   geom_line()
-mean(matrix_list$accept_vec)
+mean(abc_mat$accept_vec)
 
 
 
