@@ -11,12 +11,14 @@
 #' @param s_0 A matrix of the initial summary statistics.
 #' @param n_adapt Number of initial period.
 #' @param n_iter Number of iterations.
+#' @param sigma_s The covariance matrix for kernel function.
 #' @param sigma_0 The covariance matrix for initial period.
 #' @param sigma_epi Term to control the noise.
 #' @return Function value.
 #' @export
 abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
-                              theta_0, s_0, n_adapt, n_iter, sigma_0, sigma_epi) {
+                              theta_0, s_0, n_adapt, n_iter,
+                              sigma_s, sigma_0, sigma_epi) {
   d <- length(theta_0)
   # Variables for output
   theta_matrix <- matrix(NA, nrow=(n_iter+1), ncol=d)
@@ -24,15 +26,20 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
   accept_vec <- rep(FALSE, n_iter+1)
 
   # Initialization
-  k_0 <- kernel_func(obs, s_0, tol, sigma_0)
+  k_0 <- kernel_func(obs, s_0, tol, sigma_s)
 
   theta_matrix[1, ] <- theta_0
   s_matrix[1, ] <- s_0
 
   for (i in 2:n_adapt) {
-    theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=sigma_0))
+    repeat{
+      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=sigma_0))
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= 0)
+      if (all(boundary)) {break}
+    }
+
     s_1 <- as.vector(p_s(theta_1))
-    k_1 <- kernel_func(obs, s_1, tol, sigma_0)
+    k_1 <- kernel_func(obs, s_1, tol, sigma_s)
 
     log_alpha <- k_1 + prior(theta_1) - k_0 - prior(theta_0)
     if (log(runif(1)) < log_alpha) {
@@ -43,15 +50,20 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
 
     theta_matrix[i, ] <- theta_0
     s_matrix[i, ] <- s_0
+    print(i)
   }
 
   s_d <- 2.38^2 / d
   mean_old <- as.matrix(colMeans(theta_matrix[1:n_adapt, ]))
   cov_sigma <- s_d*cov(theta_matrix[1:n_adapt, ]) + s_d * sigma_epi * diag(d)
   for (i in (n_adapt+1):(n_iter+1)) {
-    theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
+    repeat{
+      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= 0)
+      if (all(boundary)) {break}
+    }
     s_1 <- as.vector(p_s(theta_1))
-    k_1 <- kernel_func(obs, s_1, tol, cov_sigma)
+    k_1 <- kernel_func(obs, s_1, tol, sigma_s)
 
     log_alpha <- k_1 + prior(theta_1) - k_0 - prior(theta_0)
     if (log(runif(1)) < log_alpha) {
@@ -70,6 +82,7 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
                    (i+1) * mean_new %*% t(mean_new) +
                    m_theta %*% t(m_theta) +
                    sigma_epi * diag(d))
+    print(i)
   }
 
   return(list(theta_matrix=theta_matrix,
