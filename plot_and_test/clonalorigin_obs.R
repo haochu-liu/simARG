@@ -16,9 +16,9 @@ for (i in 1:2000) {
   ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
   mat <- ARG_mutated$node_site[1:15, ]
 
-  v_r[j] <- LD_r(mat)
-  v_g3[j] <- G3_test(mat)
-  v_s[j] <- any(as.logical(mat[, 1]))
+  v_r[i] <- LD_r(mat)
+  v_g3[i] <- G3_test(mat)
+  v_s[i] <- any(as.logical(mat[, 1]))
 }
 df_obs$r[1] <- mean(v_r)
 df_obs$g[1] <- mean(v_g3)
@@ -32,9 +32,9 @@ for (i in 1:2000) {
   ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
   mat <- ARG_mutated$node_site[1:15, ]
 
-  v_r[j] <- LD_r(mat)
-  v_g3[j] <- G3_test(mat)
-  v_s[j] <- any(as.logical(mat[, 1]))
+  v_r[i] <- LD_r(mat)
+  v_g3[i] <- G3_test(mat)
+  v_s[i] <- any(as.logical(mat[, 1]))
 }
 df_obs$r[2] <- mean(v_r)
 df_obs$g[2] <- mean(v_g3)
@@ -48,9 +48,9 @@ for (i in 1:2000) {
   ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
   mat <- ARG_mutated$node_site[1:15, ]
 
-  v_r[j] <- LD_r(mat)
-  v_g3[j] <- G3_test(mat)
-  v_s[j] <- any(as.logical(mat[, 1]))
+  v_r[i] <- LD_r(mat)
+  v_g3[i] <- G3_test(mat)
+  v_s[i] <- any(as.logical(mat[, 1]))
 }
 df_obs$r[3] <- mean(v_r)
 df_obs$g[3] <- mean(v_g3)

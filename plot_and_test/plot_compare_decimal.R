@@ -1,6 +1,7 @@
 library(ggplot2)
 library(patchwork)
 library(sdprisk)
+library(latex2exp)
 
 
 rho_values <-  c(5, 10, 20, 30)
@@ -91,3 +92,30 @@ ggplot(time_plot, aes(x=rho, y=t, color=func)) +
     legend.position = "bottom"
   )
 
+time_plot <- time_plot[c(1:4, 9:12), ]
+time_plot$func <- as.character(time_plot$func)
+time_plot$func[1:4] <- "Rejection"
+time_plot$func[5:8] <- "SimBac"
+ggplot(time_plot, aes(x=rho, y=t, color=func)) +
+  geom_line(, linewidth = 1.2, alpha=0.7) +
+  geom_point(size = 2, shape = 21, fill = "white", stroke = 1.2, alpha=0.7) +
+  scale_color_manual(values=c("Rejection"="darkblue",
+                              "SimBac"="darkgreen")) +
+  labs(
+    title = "Running time for two optimisation methods",
+    x = TeX("$\\rho$"),
+    y = "Time (second)",
+    color = "Optimisation"
+  ) +
+  # scale_y_continuous(trans='log10') +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+    axis.title.x = element_text(size = 16),
+    axis.text.x = element_text(size = 12),
+    axis.title.y = element_text(size = 16),
+    axis.text.y = element_text(size = 12),
+    legend.title = element_text(size = 16),
+    legend.text = element_text(size = 12),
+    legend.position = "bottom"
+  )
