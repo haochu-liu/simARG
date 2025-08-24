@@ -34,7 +34,7 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
   for (i in 2:n_adapt) {
     repeat{
       theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=sigma_0))
-      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= 0)
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
       if (all(boundary)) {break}
     }
 
@@ -59,7 +59,7 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
   for (i in (n_adapt+1):(n_iter+1)) {
     repeat{
       theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
-      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= 0)
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
       if (all(boundary)) {break}
     }
     s_1 <- as.vector(p_s(theta_1))
