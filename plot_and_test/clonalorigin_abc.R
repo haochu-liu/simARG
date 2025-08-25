@@ -92,6 +92,10 @@ abc_mat <- abc_mcmc_adaptive(s_obs, tol, gaussian_kernel, p_s, prior,
                              theta_0, s_0, 100, 500,
                              sigma_s, sigma_0, 0)
 
+abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel, prior,
+                                      theta_0, s_0, 100, 500,
+                                      sigma_s, sigma_0, 0)
+
 # hist of posterior
 hist(abc_mat$theta_matrix[1000:2001, 2], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
