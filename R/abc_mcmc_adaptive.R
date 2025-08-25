@@ -50,7 +50,13 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
 
     theta_matrix[i, ] <- theta_0
     s_matrix[i, ] <- s_0
-    print(i)
+    print(paste("Complete", i, "iterations"))
+    if (i%%10 == 0) {
+      abc_mat <- list(theta_matrix=theta_matrix,
+                      s_matrix=s_matrix,
+                      accept_vec=accept_vec)
+      save(abc_mat, file = "abc_mat.rda")
+    }
   }
 
   s_d <- 2.38^2 / d
@@ -82,7 +88,13 @@ abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
                    (i+1) * mean_new %*% t(mean_new) +
                    m_theta %*% t(m_theta) +
                    sigma_epi * diag(d))
-    print(i)
+    print(paste("Complete", i, "iterations"))
+    if (i%%10 == 0) {
+      abc_mat <- list(theta_matrix=theta_matrix,
+                      s_matrix=s_matrix,
+                      accept_vec=accept_vec)
+      save(abc_mat, file = "abc_mat.rda")
+    }
   }
 
   return(list(theta_matrix=theta_matrix,

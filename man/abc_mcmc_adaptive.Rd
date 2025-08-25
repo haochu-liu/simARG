@@ -14,6 +14,7 @@ abc_mcmc_adaptive(
   s_0,
   n_adapt,
   n_iter,
+  sigma_s,
   sigma_0,
   sigma_epi
 )
@@ -36,6 +37,8 @@ abc_mcmc_adaptive(
 \item{n_adapt}{Number of initial period.}
 
 \item{n_iter}{Number of iterations.}
+
+\item{sigma_s}{The covariance matrix for kernel function.}
 
 \item{sigma_0}{The covariance matrix for initial period.}
 

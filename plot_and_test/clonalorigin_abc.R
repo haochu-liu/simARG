@@ -4,7 +4,7 @@ library(mvtnorm)
 
 set.seed(100)
 tree <- clonal_genealogy(15L)
-tol <- 0.1
+tol <- 0.02
 # s_obs <- c(df_obs$r, df_obs$g, mean(df_obs$s))
 s_obs <- c(0.009291352, 0.005619992, 0.002516754,
            0.002000000, 0.008000000, 0.007500000,
@@ -76,6 +76,7 @@ sigma_s <- diag(7)
 sigma_0 <- diag(c(0.002, 200, 0.002))
 
 # initial state
+set.seed(809)
 repeat {
   theta_0 <- rep(NA, 3)
   theta_0[1] <- runif(1, min=0, max=0.2)
@@ -83,12 +84,12 @@ repeat {
   theta_0[3] <- runif(1, min=0, max=0.2)
   s_0 <- p_s(theta_0)
 
-  k_0 <- gaussian_kernel(s_obs, s_0, tol, sigma_0)
+  k_0 <- gaussian_kernel(s_obs, s_0, tol, sigma_s)
   if (exp(k_0) > .Machine$double.eps) {break}
 }
 
 abc_mat <- abc_mcmc_adaptive(s_obs, tol, gaussian_kernel, p_s, prior,
-                             theta_0, s_0, 100, 1000,
+                             theta_0, s_0, 100, 500,
                              sigma_s, sigma_0, 0)
 
 # hist of posterior
