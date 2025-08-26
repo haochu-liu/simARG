@@ -15,7 +15,7 @@ p_s_parallel <- function(theta,
                          tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test) {
   # Set up a parallel backend with 5 cores
   # 'makeCluster' creates a cluster of R processes on the local machine
-  cl <- makeCluster(5)
+  cl <- makeCluster(10)
   registerDoParallel(cl)
 
   rho_site <- theta[1]

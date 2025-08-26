@@ -4,7 +4,7 @@ library(mvtnorm)
 
 set.seed(100)
 tree <- clonal_genealogy(15L)
-tol <- 0.02
+tol <- 0.05
 # s_obs <- c(df_obs$r, df_obs$g, mean(df_obs$s))
 s_obs <- c(0.009291352, 0.005619992, 0.002516754,
            0.002000000, 0.008000000, 0.007500000,
@@ -97,11 +97,11 @@ abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel,
                                       sigma_s, sigma_0, 0)
 
 # hist of posterior
-hist(abc_mat$theta_matrix[1000:2001, 2], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[1:500, 3], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
-# trace plot
-df <- data.frame(x = 1:2001,
+d# trace plot
+df <- data.frame(x = 1:501,
                  y = abc_mat$theta_matrix[, 2])
 ggplot(df, aes(x = x, y = y)) +
   geom_line()
