@@ -34,8 +34,11 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
   s_matrix[1, ] <- s_0
 
   for (i in 2:n_adapt) {
-    theta_1 <- rtruncnorm(n = 1, a = c(0, 1, 0), b = c(0.2, 2000, 0.2),
-                          mean = theta_0, sd = diag(sigma_0))
+    repeat{
+      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=sigma_0))
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
+      if (all(boundary)) {break}
+    }
 
     s_1 <- as.vector(p_s_parallel(theta_1,
                                   tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test))
@@ -63,8 +66,11 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
   mean_old <- as.matrix(colMeans(theta_matrix[1:n_adapt, ]))
   cov_sigma <- s_d*cov(theta_matrix[1:n_adapt, ]) + s_d * sigma_epi * diag(d)
   for (i in (n_adapt+1):(n_iter+1)) {
-    theta_1 <- rtruncnorm(n = 1, a = c(0, 1, 0), b = c(0.2, 2000, 0.2),
-                          mean = theta_0, sd = diag(cov_sigma))
+    repeat{
+      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
+      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
+      if (all(boundary)) {break}
+    }
 
     s_1 <- as.vector(p_s_parallel(theta_1,
                                   tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test))

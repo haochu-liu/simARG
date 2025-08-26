@@ -1,17 +1,97 @@
 library(ggplot2)
 library(mvtnorm)
 library(truncnorm)
+library(foreach)
+library(doParallel)
 
 
 set.seed(100)
 tree <- clonal_genealogy(15L)
-tol <- 0.05
+
+tol <- 0.015
 # s_obs <- c(df_obs$r, df_obs$g, mean(df_obs$s))
 s_obs <- c(0.009291352, 0.005619992, 0.002516754,
            0.002000000, 0.008000000, 0.007500000,
            0.201166667)
 
 # model sample
+ClonalOrigin_pair_seq <- ClonalOrigin_pair_seq
+FSM_mutation <- FSM_mutation
+LD_r <- LD_r
+G3_test <- G3_test
+
+p_s_parallel <- function(theta,
+                         tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test) {
+  # Set up a parallel backend with 5 cores
+  # 'makeCluster' creates a cluster of R processes on the local machine
+  cl <- makeCluster(10)
+  registerDoParallel(cl)
+
+  rho_site <- theta[1]
+  delta <- theta[2]
+  theta_site <- theta[3]
+  s_vec <- rep(NA, 7)
+
+
+
+  # Function to run a single iteration for a given loop
+  run_simulation <- function(rho_site, delta, theta_site, l_val) {
+    ARG <- ClonalOrigin_pair_seq(tree, rho_site, 1e6L, delta, l_val)
+    ARG_mutated <- FSM_mutation(ARG, theta_site, binary=TRUE)
+    mat <- ARG_mutated$node_site[1:15, ]
+
+    return(list(
+      LD_r = LD_r(mat),
+      G3_test = G3_test(mat),
+      s = any(as.logical(mat[, 1]))
+    ))
+  }
+
+  # Define loop lengths
+  l_values <- c(50L, 200L, 2000L)
+
+  # Use foreach to parallelize the three groups of simulations
+  results <- foreach(
+    l = l_values,
+    .combine = 'list',
+    .multicombine = TRUE,
+    .packages = c("foreach") # Add any packages needed inside the loop
+  ) %dopar% {
+
+    # Run the 2000 simulations for each l_value
+    l_results <- foreach(i = 1:2000, .combine = 'rbind') %do% {
+      res <- run_simulation(rho_site, delta, theta_site, l)
+      c(res$LD_r, res$G3_test, res$s)
+    }
+
+    # Convert to a data frame for easier manipulation
+    l_results <- as.data.frame(l_results)
+    colnames(l_results) <- c("v_r", "v_g3", "v_s")
+    l_results
+  }
+
+  # Shut down the cluster
+  stopCluster(cl)
+
+  # Process the results
+  # Note that this part is different since the results are structured differently
+  s_vec[1] <- mean(results[[1]]$v_r)
+  s_vec[4] <- mean(results[[1]]$v_g3)
+
+  s_vec[2] <- mean(results[[2]]$v_r)
+  s_vec[5] <- mean(results[[2]]$v_g3)
+
+  s_vec[3] <- mean(results[[3]]$v_r)
+  s_vec[6] <- mean(results[[3]]$v_g3)
+
+  # s_vec[7] is a bit trickier, as v_s is a single vector of length 6000
+  # We need to collect all v_s values from all results
+  all_s_values <- c(results[[1]]$v_s, results[[2]]$v_s, results[[3]]$v_s)
+  s_vec[7] <- mean(all_s_values)
+
+  return(s_vec)
+}
+
 p_s <- function(theta) {
   rho_site <- theta[1]
   delta <- theta[2]
@@ -89,21 +169,18 @@ repeat {
   if (exp(k_0) > .Machine$double.eps) {break}
 }
 
-abc_mat <- abc_mcmc_adaptive(s_obs, tol, gaussian_kernel, p_s, prior,
-                             theta_0, s_0, 100, 500,
-                             sigma_s, sigma_0, 0)
-
 abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel, prior,
                                       theta_0, s_0, 100, 500,
-                                      sigma_s, sigma_0, 0)
+                                      sigma_s, sigma_0, 0, "1")
+
 
 # hist of posterior
-hist(abc_mat$theta_matrix[1:500, 3], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[100:500, 3], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
-d# trace plot
+# trace plot
 df <- data.frame(x = 1:501,
-                 y = abc_mat$theta_matrix[, 2])
+                 y = abc_mat$theta_matrix[, 3])
 ggplot(df, aes(x = x, y = y)) +
   geom_line()
 mean(abc_mat$accept_vec)
