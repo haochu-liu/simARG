@@ -1,5 +1,6 @@
 library(ggplot2)
 library(mvtnorm)
+library(truncnorm)
 
 
 set.seed(100)

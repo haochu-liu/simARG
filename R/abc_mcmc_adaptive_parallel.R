@@ -14,16 +14,18 @@
 #' @param sigma_s The covariance matrix for kernel function.
 #' @param sigma_0 The covariance matrix for initial period.
 #' @param sigma_epi Term to control the noise.
+#' @param string A string for file saving.
 #' @return Function value.
 #' @export
 abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prior,
                                        theta_0, s_0, n_adapt, n_iter,
-                                       sigma_s, sigma_0, sigma_epi) {
+                                       sigma_s, sigma_0, sigma_epi, string) {
   d <- length(theta_0)
   # Variables for output
   theta_matrix <- matrix(NA, nrow=(n_iter+1), ncol=d)
   s_matrix <- matrix(NA, nrow=(n_iter+1), ncol=length(obs))
   accept_vec <- rep(FALSE, n_iter+1)
+  file_str <- paste0("abc_mat_", string, ".rda")
 
   # Initialization
   k_0 <- kernel_func(obs, s_0, tol, sigma_s)
@@ -32,11 +34,8 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
   s_matrix[1, ] <- s_0
 
   for (i in 2:n_adapt) {
-    repeat{
-      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=sigma_0))
-      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
-      if (all(boundary)) {break}
-    }
+    theta_1 <- rtruncnorm(n = 1, a = c(0, 1, 0), b = c(0.2, 2000, 0.2),
+                          mean = theta_0, sd = diag(sigma_0))
 
     s_1 <- as.vector(p_s_parallel(theta_1,
                                   tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test))
@@ -56,7 +55,7 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
       abc_mat <- list(theta_matrix=theta_matrix,
                       s_matrix=s_matrix,
                       accept_vec=accept_vec)
-      save(abc_mat, file = "abc_mat.rda")
+      save(abc_mat, file = file_str)
     }
   }
 
@@ -64,11 +63,9 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
   mean_old <- as.matrix(colMeans(theta_matrix[1:n_adapt, ]))
   cov_sigma <- s_d*cov(theta_matrix[1:n_adapt, ]) + s_d * sigma_epi * diag(d)
   for (i in (n_adapt+1):(n_iter+1)) {
-    repeat{
-      theta_1 <- as.vector(rmvnorm(n=1, mean=theta_0, sigma=cov_sigma))
-      boundary <- (theta_1 <= c(0.2, 2000, 0.2)) & (theta_1 >= c(0, 1, 0))
-      if (all(boundary)) {break}
-    }
+    theta_1 <- rtruncnorm(n = 1, a = c(0, 1, 0), b = c(0.2, 2000, 0.2),
+                          mean = theta_0, sd = diag(cov_sigma))
+
     s_1 <- as.vector(p_s_parallel(theta_1,
                                   tree, ClonalOrigin_pair_seq, FSM_mutation, LD_r, G3_test))
     k_1 <- kernel_func(obs, s_1, tol, sigma_s)
@@ -95,7 +92,7 @@ abc_mcmc_adaptive_parallel <- function(obs, tol, kernel_func, p_s_parallel, prio
       abc_mat <- list(theta_matrix=theta_matrix,
                       s_matrix=s_matrix,
                       accept_vec=accept_vec)
-      save(abc_mat, file = "abc_mat.rda")
+      save(abc_mat, file = file_str)
     }
   }
 

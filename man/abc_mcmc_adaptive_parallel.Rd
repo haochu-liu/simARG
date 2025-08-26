@@ -16,7 +16,8 @@ abc_mcmc_adaptive_parallel(
   n_iter,
   sigma_s,
   sigma_0,
-  sigma_epi
+  sigma_epi,
+  string
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ abc_mcmc_adaptive_parallel(
 \item{sigma_0}{The covariance matrix for initial period.}
 
 \item{sigma_epi}{Term to control the noise.}
+
+\item{string}{A string for file saving.}
 }
 \value{
 Function value.
