@@ -175,12 +175,12 @@ abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel,
 
 
 # hist of posterior
-hist(abc_mat$theta_matrix[100:500, 3], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[1000:2001, 1], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
 # trace plot
-df <- data.frame(x = 1:501,
-                 y = abc_mat$theta_matrix[, 3])
+df <- data.frame(x = 1:2001,
+                 y = abc_mat$theta_matrix[, 1])
 ggplot(df, aes(x = x, y = y)) +
   geom_line()
 mean(abc_mat$accept_vec)
