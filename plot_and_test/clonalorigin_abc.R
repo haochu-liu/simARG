@@ -1,4 +1,6 @@
 library(ggplot2)
+library(patchwork)
+library(latex2exp)
 library(mvtnorm)
 library(truncnorm)
 library(foreach)
@@ -175,12 +177,188 @@ abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel,
 
 
 # hist of posterior
-hist(abc_mat$theta_matrix[1000:2001, 1], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[200:5001, 1], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
+prior_1 <- data.frame(
+  x = c(0, 0.2),
+  y = c(1/(0.2-0), 1/(0.2-0))
+)
+
+prior_2 <- data.frame(
+  x = c(1, 2000),
+  y = c(1/(2000-1), 1/(2000-1))
+)
+
+theta_df <- as.data.frame(abc_mat$theta_matrix[201:1201, ])
+colnames(theta_df) <- c("rho_s", "delta", "theta_s")
+
+hist1 <- ggplot(theta_df, aes(x = rho_s)) +
+  # Add the posterior histogram, mapping the fill aesthetic to a fixed value
+  geom_histogram(
+    aes(y = ..density.., fill = "Posterior"),
+    bins = 10,
+    # binwidth = 0.0025,
+    color = "black",
+    alpha = 0.7
+  ) +
+  # Add the Prior density line, mapping the color aesthetic to a fixed value
+  geom_line(
+    data = prior_1,
+    aes(x = x, y = y, color = "Prior"),
+    size = 0.8
+  ) +
+  # Add the True value vertical line, mapping the color aesthetic to a fixed value
+  geom_vline(
+    xintercept = 0.02,
+    size = 0.8,
+    linetype = "solid",
+    color = "green"
+  ) +
+  # Manually define the colors for the mapped aesthetics
+  scale_color_manual(
+    name = "",
+    values = c("Posterior" = "darkblue", "Prior" = "red", "True value" = "green")
+  ) +
+  # Manually define the fill color for the histogram
+  scale_fill_manual(
+    name = "",
+    values = "darkblue"
+  ) +
+  # Customize the theme and labels
+  labs(
+    x = TeX("$\\rho_s$"),
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  # Set axis limits
+  xlim(0, 0.2)
+
+hist2 <- ggplot(theta_df, aes(x = delta)) +
+  # Add the posterior histogram, mapping the fill aesthetic to a fixed value
+  geom_histogram(
+    aes(y = ..density.., fill = "Posterior"),
+    bins = 10,
+    # binwidth = 10,
+    color = "black",
+    alpha = 0.7
+  ) +
+  # Add the Prior density line, mapping the color aesthetic to a fixed value
+  geom_line(
+    data = prior_2,
+    aes(x = x, y = y, color = "Prior"),
+    size = 0.8
+  ) +
+  # Add the True value vertical line, mapping the color aesthetic to a fixed value
+  geom_vline(
+    xintercept = 300,
+    size = 0.8,
+    linetype = "solid",
+    color = "green"
+  ) +
+  # Manually define the colors for the mapped aesthetics
+  scale_color_manual(
+    name = "",
+    values = c("Posterior" = "darkblue", "Prior" = "red", "True value" = "green")
+  ) +
+  # Manually define the fill color for the histogram
+  scale_fill_manual(
+    name = "",
+    values = "darkblue"
+  ) +
+  # Customize the theme and labels
+  labs(
+    x = TeX("$\\delta$"),
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  # Set axis limits
+  xlim(1, 2000)
+
+hist3 <- ggplot(theta_df, aes(x = theta_s)) +
+  # Add the posterior histogram, mapping the fill aesthetic to a fixed value
+  geom_histogram(
+    aes(y = ..density.., fill = "Posterior"),
+    bins = 10,
+    # binwidth = 0.005,
+    color = "black",
+    alpha = 0.7
+  ) +
+  # Add the Prior density line, mapping the color aesthetic to a fixed value
+  geom_line(
+    data = prior_1,
+    aes(x = x, y = y, color = "Prior"),
+    size = 0.8
+  ) +
+  # Add the True value vertical line, mapping the color aesthetic to a fixed value
+  geom_vline(
+    xintercept = 0.05,
+    size = 0.8,
+    linetype = "solid",
+    color = "green"
+  ) +
+  # Manually define the colors for the mapped aesthetics
+  scale_color_manual(
+    name = "",
+    values = c("Posterior" = "darkblue", "Prior" = "red", "True value" = "green")
+  ) +
+  # Manually define the fill color for the histogram
+  scale_fill_manual(
+    name = "",
+    values = "darkblue"
+  ) +
+  # Customize the theme and labels
+  labs(
+    x = TeX("$\\theta_s$"),
+    y = "Density"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "right") +
+  # Set axis limits
+  xlim(0, 0.2)
+
+combined_hist <- hist1 + hist2 + hist3
+combined_hist <- combined_hist +
+  plot_annotation(
+    title = "Estimated marginal posterior densities of the parameters")
+print(combined_hist)
+
+
 # trace plot
-df <- data.frame(x = 1:2001,
-                 y = abc_mat$theta_matrix[, 1])
-ggplot(df, aes(x = x, y = y)) +
-  geom_line()
-mean(abc_mat$accept_vec)
+theta_df <- as.data.frame(abc_mat$theta_matrix[1:1201, ])
+colnames(theta_df) <- c("rho_s", "delta", "theta_s")
+theta_df$x <- 1:1201
+trace1 <- ggplot(theta_df, aes(x = x, y = rho_s)) +
+  geom_line() +
+  labs(
+    x = "Iterations",
+    y = TeX("$\\rho_s$")
+  ) +
+  theme_minimal()
+trace2 <- ggplot(theta_df, aes(x = x, y = delta)) +
+  geom_line() +
+  labs(
+    x = "Iterations",
+    y = TeX("$\\delta$")
+  ) +
+  theme_minimal()
+trace3 <- ggplot(theta_df, aes(x = x, y = theta_s)) +
+  geom_line() +
+  labs(
+    x = "Iterations",
+    y = TeX("$\\theta_s$")
+  ) +
+  theme_minimal()
+
+combined_trace <- trace1 / trace2 / trace3
+combined_trace <- combined_trace +
+  plot_annotation(
+    title = "Trace plot of ABC-MCMC with AM algorithm")
+print(combined_trace)
+
+
+quantile(abc_mat$theta_matrix[201:1201, 3], probs = c(0.025, 0.975))
+mean(abc_mat$theta_matrix[201:1201, 3])
+mean(abc_mat$accept_vec[1:1201])
