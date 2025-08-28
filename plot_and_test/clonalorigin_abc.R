@@ -177,7 +177,7 @@ abc_mat <- abc_mcmc_adaptive_parallel(s_obs, tol, gaussian_kernel, p_s_parallel,
 
 
 # hist of posterior
-hist(abc_mat$theta_matrix[200:5001, 1], probability = TRUE, main = "Histogram of mu|s_obs",
+hist(abc_mat$theta_matrix[501:5001, 3], probability = TRUE, main = "Histogram of mu|s_obs",
      breaks = 20, col = "gray", border = "black", xlab="mu")
 
 prior_1 <- data.frame(
@@ -190,14 +190,14 @@ prior_2 <- data.frame(
   y = c(1/(2000-1), 1/(2000-1))
 )
 
-theta_df <- as.data.frame(abc_mat$theta_matrix[201:1201, ])
+theta_df <- as.data.frame(abc_mat$theta_matrix[501:5001, ])
 colnames(theta_df) <- c("rho_s", "delta", "theta_s")
 
 hist1 <- ggplot(theta_df, aes(x = rho_s)) +
   # Add the posterior histogram, mapping the fill aesthetic to a fixed value
   geom_histogram(
     aes(y = ..density.., fill = "Posterior"),
-    bins = 10,
+    bins = 25,
     # binwidth = 0.0025,
     color = "black",
     alpha = 0.7
@@ -239,7 +239,7 @@ hist2 <- ggplot(theta_df, aes(x = delta)) +
   # Add the posterior histogram, mapping the fill aesthetic to a fixed value
   geom_histogram(
     aes(y = ..density.., fill = "Posterior"),
-    bins = 10,
+    bins = 25,
     # binwidth = 10,
     color = "black",
     alpha = 0.7
@@ -281,7 +281,7 @@ hist3 <- ggplot(theta_df, aes(x = theta_s)) +
   # Add the posterior histogram, mapping the fill aesthetic to a fixed value
   geom_histogram(
     aes(y = ..density.., fill = "Posterior"),
-    bins = 10,
+    bins = 25,
     # binwidth = 0.005,
     color = "black",
     alpha = 0.7
@@ -327,9 +327,9 @@ print(combined_hist)
 
 
 # trace plot
-theta_df <- as.data.frame(abc_mat$theta_matrix[1:1201, ])
+theta_df <- as.data.frame(abc_mat$theta_matrix[1:5001, ])
 colnames(theta_df) <- c("rho_s", "delta", "theta_s")
-theta_df$x <- 1:1201
+theta_df$x <- 1:5001
 trace1 <- ggplot(theta_df, aes(x = x, y = rho_s)) +
   geom_line() +
   labs(
@@ -359,6 +359,6 @@ combined_trace <- combined_trace +
 print(combined_trace)
 
 
-quantile(abc_mat$theta_matrix[201:1201, 3], probs = c(0.025, 0.975))
-mean(abc_mat$theta_matrix[201:1201, 3])
-mean(abc_mat$accept_vec[1:1201])
+quantile(abc_mat$theta_matrix[501:5001, 3], probs = c(0.025, 0.975))
+mean(abc_mat$theta_matrix[501:5001, 3])
+mean(abc_mat$accept_vec[1:5001])
