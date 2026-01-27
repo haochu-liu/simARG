@@ -16,9 +16,9 @@
 #' @param sigma_epi Term to control the noise.
 #' @return Function value.
 #' @export
-abc_mcmc_adaptive <- function(obs, tol, kernel_func, p_s, prior,
-                              theta_0, s_0, n_adapt, n_iter,
-                              sigma_s, sigma_0, sigma_epi) {
+abc_am <- function(obs, tol, kernel_func, p_s, prior,
+                   theta_0, s_0, n_adapt, n_iter,
+                   sigma_s, sigma_0, sigma_epi) {
   d <- length(theta_0)
   # Variables for output
   theta_matrix <- matrix(NA, nrow=(n_iter+1), ncol=d)
