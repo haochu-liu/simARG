@@ -2,17 +2,14 @@
 % Please edit documentation in R/birth_death_sim.R
 \name{birth_death_sim}
 \alias{birth_death_sim}
-\title{Input: n and rho
-Simulate a birth death process until it hits the boundary
-Output: the time when the process first hit k=1
-Hitting time for a birth-death process}
+\title{Hitting time for a birth-death process}
 \usage{
 birth_death_sim(n, rho)
 }
 \arguments{
 \item{n}{A single integer for initial value.}
 
-\item{rho}{The death rate.}
+\item{rho}{The birth rate.}
 }
 \value{
 Hitting time and number of jumps.

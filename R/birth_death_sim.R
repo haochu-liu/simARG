@@ -1,13 +1,9 @@
-#' Input: n and rho
-#' Simulate a birth death process until it hits the boundary
-#' Output: the time when the process first hit k=1
-
 #' Hitting time for a birth-death process
 #'
 #' Simulate a birth-death process and find its hitting time at boundary equals to 1.
 #'
 #' @param n A single integer for initial value.
-#' @param rho The death rate.
+#' @param rho The birth rate.
 #' @return Hitting time and number of jumps.
 #' @export
 #'
