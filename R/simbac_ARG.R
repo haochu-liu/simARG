@@ -6,11 +6,11 @@
 #' @param n An integer for the number of leaf lineages.
 #' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
-#' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
-#' @param node_max numeric; Initial maximal node size (default = 1000).
-#' @param output_eff_R logical; If TRUE, return effective recombination rates.
-#' @param optimise_site logical; If TRUE, optimise coalesced sites.
-#' @param edgemat numeric; If TRUE, return full edge material matrix.
+#' @param delta Numeric, delta is the mean of recombinant segment length.
+#' @param node_max Numeric; Initial maximal node size (default = 1000).
+#' @param output_eff_R Logical; If TRUE, return effective recombination rates.
+#' @param optimise_site Logical; If TRUE, optimise coalesced sites.
+#' @param edgemat Numeric; If TRUE, return full edge material matrix.
 #' @return A list containing matrices of edges and nodes, and other information about ARG.
 #' @export
 #'

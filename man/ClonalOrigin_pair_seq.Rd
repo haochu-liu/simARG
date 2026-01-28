@@ -13,7 +13,7 @@ ClonalOrigin_pair_seq(tree, rho_site, L, delta, k)
 
 \item{L}{An integer for the number of sites.}
 
-\item{delta}{numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.}
+\item{delta}{Numeric, delta is the mean of recombinant segment length.}
 
 \item{k}{An integer for the distance between two sites.}
 }

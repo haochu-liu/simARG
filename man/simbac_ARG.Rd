@@ -22,15 +22,15 @@ simbac_ARG(
 
 \item{L}{An integer for the number of sites.}
 
-\item{delta}{numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.}
+\item{delta}{Numeric, delta is the mean of recombinant segment length.}
 
-\item{node_max}{numeric; Initial maximal node size (default = 1000).}
+\item{node_max}{Numeric; Initial maximal node size (default = 1000).}
 
-\item{output_eff_R}{logical; If TRUE, return effective recombination rates.}
+\item{output_eff_R}{Logical; If TRUE, return effective recombination rates.}
 
-\item{optimise_site}{logical; If TRUE, optimise coalesced sites.}
+\item{optimise_site}{Logical; If TRUE, optimise coalesced sites.}
 
-\item{edgemat}{numeric; If TRUE, return full edge material matrix.}
+\item{edgemat}{Numeric; If TRUE, return full edge material matrix.}
 }
 \value{
 A list containing matrices of edges and nodes, and other information about ARG.

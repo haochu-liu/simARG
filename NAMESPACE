@@ -3,6 +3,7 @@
 S3method(plot,ARG)
 export(ClonalOrigin_ARG_based)
 export(ClonalOrigin_pair_seq)
+export(ClonalOrigin_pair_seq.simulator)
 export(ClonalOrigin_tree_based)
 export(ClonalOrigin_tree_seq)
 export(FSM_ARG)

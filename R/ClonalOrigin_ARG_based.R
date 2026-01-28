@@ -6,7 +6,7 @@
 #' @param n An integer for the number of leaf lineages.
 #' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
-#' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
+#' @param delta Numeric, delta is the mean of recombinant segment length.
 #' @param node_max numeric; Initial maximal node size (default = 1000).
 #' @param optimise_recomb numeric; If TRUE, skip the recombinations that containing no effective segment.
 #' @param edgemat numeric; If TRUE, return full edge material matrix.

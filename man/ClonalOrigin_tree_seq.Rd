@@ -13,7 +13,7 @@ ClonalOrigin_tree_seq(n, rho_site, L, delta)
 
 \item{L}{An integer for the number of sites.}
 
-\item{delta}{numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.}
+\item{delta}{Numeric, delta is the mean of recombinant segment length.}
 }
 \value{
 A list containing clonal tree and recombination edges.

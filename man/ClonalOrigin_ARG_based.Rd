@@ -21,7 +21,7 @@ ClonalOrigin_ARG_based(
 
 \item{L}{An integer for the number of sites.}
 
-\item{delta}{numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.}
+\item{delta}{Numeric, delta is the mean of recombinant segment length.}
 
 \item{node_max}{numeric; Initial maximal node size (default = 1000).}
 

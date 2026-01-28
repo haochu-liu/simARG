@@ -5,7 +5,7 @@
 #' @param tree The clonal genealogy.
 #' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
-#' @param delta numeric; If bacteria = TRUE, delta is the mean of recombinant segment length.
+#' @param delta Numeric, delta is the mean of recombinant segment length.
 #' @param k An integer for the distance between two sites.
 #' @return A list containing clonal tree and recombination edges.
 #' @export
