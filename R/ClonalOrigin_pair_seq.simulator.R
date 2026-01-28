@@ -41,10 +41,10 @@ ClonalOrigin_pair_seq.simulator <- function(tree, rho_site, theta_site,
       v_g3[i] <- G3_test(mat)
       v_s[i+(j-1)*N] <- any(as.logical(mat[, 1]))
     }
-    s_vec[j] <- median(v_r)
-    s_vec[j+3] <- median(v_g3)
+    s_vec[j] <- mean(v_r)
+    s_vec[j+3] <- mean(v_g3)
   }
-  s_vec[7] <- median(v_s)
+  s_vec[7] <- mean(v_s)
 
   return(s_vec)
 }
