@@ -22,11 +22,9 @@ FSM_mutation_fast <- function(ARG, theta_site) {
   theta <- theta_site * ncol(ARG$node_mat)
   l <- sum(ARG$edge[, 3])
   n <- rpois(1, theta*l/2) # num of mutations | l ~ Poisson(theta*l/2)
-  ARG$mutation <- matrix(NA, nrow=n, ncol=3)
-  colnames(ARG$mutation) <- c("edge_index", "pos", "site")
-  if (binary) {
-    ARG$node_site <- matrix(FALSE, nrow=nrow(ARG$node_mat), ncol=ncol(ARG$node_mat))
-  }
+
+  ARG$node_site <- matrix(FALSE, nrow=nrow(ARG$node_mat), ncol=ncol(ARG$node_mat))
+
   ARG$node <- data.frame(gene_str=rep("[]", length(ARG$node_height)))
   ARG$node$gene <- list(numeric())
 
@@ -47,19 +45,11 @@ FSM_mutation_fast <- function(ARG, theta_site) {
   }
   mutate_edge <- mutate_edge[keep_mutation]
   mutate_site <- mutate_site[keep_mutation]
-  ARG$mutation <- ARG$mutation[keep_mutation, , drop = FALSE]
   if (!length(keep_mutation)) {return(ARG)}
-
-  # dataframe mutations to store information of mutations
-  ARG$mutation[, 1] <- mutate_edge
-  ARG$mutation[, 3] <- mutate_site
-  for (i in 1:length(mutate_edge)) {
-    ARG$mutation[i, 2] <- runif(1, max=ARG$edge[mutate_edge[i], 3])
-  }
 
   # simulate the mutations at every node
   for (i in nrow(ARG$edge):1) {
-    edge_mutation <- as.integer(ARG$mutation[ARG$mutation[, 1]==i, 3])
+    edge_mutation <- as.integer(mutate_site[mutate_edge==i])
     parent_seq <- ARG$node$gene[[ARG$edge[i, 1]]]
     parent_seq <- c(parent_seq, edge_mutation)
     for (j in 1:ncol(ARG$node_mat)) {
@@ -71,21 +61,13 @@ FSM_mutation_fast <- function(ARG, theta_site) {
                                               ARG$node$gene[[ARG$edge[i, 2]]]))
   }
 
-  if (binary) {
-    # convert to incidence matrix
-    for (i in 1:nrow(ARG$node_mat)) {
-      for (j in 1:ncol(ARG$node_mat)) {
-        num_mutation <- sum(ARG$node$gene[[i]] == j)
-        if (num_mutation %% 2) {
-          ARG$node_site[i, j] <- TRUE
-        }
+  # convert to incidence matrix
+  for (i in 1:nrow(ARG$node_mat)) {
+    for (j in 1:ncol(ARG$node_mat)) {
+      num_mutation <- sum(ARG$node$gene[[i]] == j)
+      if (num_mutation %% 2) {
+        ARG$node_site[i, j] <- TRUE
       }
-    }
-  } else {
-    # convert to string
-    for (i in 1:nrow(ARG$node_mat)) {
-      ARG$node$gene_str[i] <- paste0("[", paste(round(ARG$node$gene[[i]], 3),
-                                                collapse = ", "), "]")
     }
   }
 
