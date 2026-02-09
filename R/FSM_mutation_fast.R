@@ -25,9 +25,6 @@ FSM_mutation_fast <- function(ARG, theta_site) {
 
   ARG$node_site <- matrix(FALSE, nrow=nrow(ARG$node_mat), ncol=ncol(ARG$node_mat))
 
-  ARG$node <- data.frame(gene_str=rep("[]", length(ARG$node_height)))
-  ARG$node$gene <- list(numeric())
-
   # if there is no mutation
   if (n == 0) {return(ARG)}
 
