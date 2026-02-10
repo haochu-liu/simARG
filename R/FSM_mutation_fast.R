@@ -8,7 +8,7 @@
 #'
 #' @param ARG A `FSM_ARG` object.
 #' @param theta_site The mutation rate per site.
-#' @return Add a mutation matrix and a genotype dataframe to the `FSM_ARG` object.
+#' @return Add a site matrix for every node to the `FSM_ARG` object.
 #' @export
 #'
 #' @examples
@@ -50,7 +50,7 @@ FSM_mutation_fast <- function(ARG, theta_site) {
     parent_seq <- ARG$node_site[ARG$edge[i, 1], ]
     flip_counts <- tabulate(edge_mutation, nbins = length(parent_seq))
     parent_seq <- xor(parent_seq, flip_counts %% 2 == 1)
-    material_range <- ARG$node_mat[ARG$edge[i, 1], ]
+    material_range <- ARG$edge_mat[i, ]
     ARG$node_site[ARG$edge[i, 2], material_range] <- parent_seq[material_range]
   }
 

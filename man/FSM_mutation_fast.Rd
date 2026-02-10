@@ -12,7 +12,7 @@ FSM_mutation_fast(ARG, theta_site)
 \item{theta_site}{The mutation rate per site.}
 }
 \value{
-Add a mutation matrix and a genotype dataframe to the \code{FSM_ARG} object.
+Add a site matrix for every node to the \code{FSM_ARG} object.
 }
 \description{
 Add mutations uniformly onto the edges of ARG with infinite site assumption.
