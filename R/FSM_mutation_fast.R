@@ -47,25 +47,11 @@ FSM_mutation_fast <- function(ARG, theta_site) {
   # simulate the mutations at every node
   for (i in nrow(ARG$edge):1) {
     edge_mutation <- as.integer(mutate_site[mutate_edge==i])
-    parent_seq <- ARG$node$gene[[ARG$edge[i, 1]]]
-    parent_seq <- c(parent_seq, edge_mutation)
-    for (j in 1:ncol(ARG$node_mat)) {
-      if (ARG$edge_mat[i, j] == 0) {
-        parent_seq <- parent_seq[parent_seq != j]
-      }
-    }
-    ARG$node$gene[[ARG$edge[i, 2]]] <- sort(c(parent_seq,
-                                              ARG$node$gene[[ARG$edge[i, 2]]]))
-  }
-
-  # convert to incidence matrix
-  for (i in 1:nrow(ARG$node_mat)) {
-    for (j in 1:ncol(ARG$node_mat)) {
-      num_mutation <- sum(ARG$node$gene[[i]] == j)
-      if (num_mutation %% 2) {
-        ARG$node_site[i, j] <- TRUE
-      }
-    }
+    parent_seq <- ARG$node_site[ARG$edge[i, 1], ]
+    flip_counts <- tabulate(edge_mutation, nbins = length(parent_seq))
+    parent_seq <- xor(parent_seq, flip_counts %% 2 == 1)
+    material_range <- ARG$node_mat[ARG$edge[i, 1], ]
+    ARG$node_site[ARG$edge[i, 2], material_range] <- parent_seq[material_range]
   }
 
   return(ARG)
