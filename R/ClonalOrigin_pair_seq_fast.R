@@ -89,7 +89,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
         # simulate a_edge
         if (num_lineage > 1) {
           pool_edge <- which((clonal_node_height[clonal_edge[, 1]] >= recomb_edge[n_recomb+j, 4]) &
-                               (clonal_node_height[clonal_edge[, 2]] <  recomb_edge[n_recomb+j, 4]))
+                             (clonal_node_height[clonal_edge[, 2]] <  recomb_edge[n_recomb+j, 4]))
           recomb_edge[n_recomb+j, 3] <- sample(pool_edge, 1, replace=TRUE)
         } else {
           recomb_edge[n_recomb+j, 3] <- 2*n - 1
@@ -153,6 +153,9 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
   # Add variables for searching node_info[, 1]
   ord_node_info_1 <- order(node_info[, 1])
 
+  # Create a list for searching clonal nodes
+  clonal_edge_list <- split(seq_along(clonal_edge[, 1]), clonal_edge[, 1])
+
   # recombination nodes on every edge
   recomb_node <- lapply(1:(2*n - 1), function(n){
     ClonalOrigin_nodes(recomb_edge, n)
@@ -164,13 +167,13 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
     if (node_info[i, 3]==0) {
       # clonal tree
       node_index <- node_info[i, 1]
-      leaf_edge <- which(clonal_edge[, 1] == node_index)
+      leaf_edge <- clonal_edge_list[[as.character(node_index)]]
       leaf_index <- rep(NA, 2)
       leaf_node <- rep(NA, 2)
       if (length(recomb_node[[leaf_edge[1]]])) {
         # target node is tail(recomb_node[[leaf_edge[1]]], 1)
         tar_node <- tail(recomb_node[[leaf_edge[1]]], 1)
-        leaf_index[1] <- which(tar_node==node_info[, 3])
+        leaf_index[1] <- match(tar_node, node_info[, 3])
         leaf_node[1] <- node_info[leaf_index[1], 1]
       } else {
         leaf_node[1] <- clonal_edge[leaf_edge[1], 2]
@@ -179,7 +182,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
       if (length(recomb_node[[leaf_edge[2]]])) {
         # target node is tail(recomb_node[[leaf_edge[2]]], 1)
         tar_node <- tail(recomb_node[[leaf_edge[2]]], 1)
-        leaf_index[2] <- which(tar_node==node_info[, 3])
+        leaf_index[2] <- match(tar_node, node_info[, 3])
         leaf_node[2] <- node_info[leaf_index[2], 1]
       } else {
         leaf_node[2] <- clonal_edge[leaf_edge[2], 2]
@@ -201,11 +204,13 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
       # recombination edge out node
       node_index <- node_info[c(i, i+1L), 1]
       leaf_edge <- recomb_edge[abs(node_info[i, 3]), 1]
-      tar_node <- which(recomb_node[[leaf_edge]]==node_info[i, 3])
+      tar_node <- match(node_info[i, 3], recomb_node[[leaf_edge]])
       if (tar_node==1) {
         leaf_node <- clonal_edge[leaf_edge, 2]
       } else {
-        leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
+        leaf_node <- node_info[match(recomb_node[[leaf_edge]][tar_node-1],
+                                     node_info[, 3]),
+                               1]
       }
       leaf_index <- ord_node_info_1[leaf_node]
 
@@ -229,7 +234,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
       # recombination edge in node
       node_index <- node_info[i, 1]
       leaf_edge <- recomb_edge[node_info[i, 3], 3]
-      tar_node <- which(recomb_node[[leaf_edge]]==node_info[i, 3])
+      tar_node <- match(node_info[i, 3], recomb_node[[leaf_edge]])
       if (tar_node==1) {
         if (leaf_edge==(2*n - 1)) {
           leaf_node <- 2*n - 1
@@ -237,11 +242,13 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
           leaf_node <- clonal_edge[leaf_edge, 2]
         }
       } else {
-        leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
+        leaf_node <- node_info[match(recomb_node[[leaf_edge]][tar_node-1],
+                                     node_info[, 3]),
+                               1]
       }
       leaf_index <- rep(NA, 2)
       leaf_index[1] <- ord_node_info_1[leaf_node]
-      leaf_index[2] <- which(node_info[, 3]==(-node_info[i, 3])) + 1
+      leaf_index[2] <- match((-node_info[i, 3]), node_info[, 3]) + 1
 
       # append edges
       edge_matrix[c(edge_index, edge_index+1), 1] <- i
