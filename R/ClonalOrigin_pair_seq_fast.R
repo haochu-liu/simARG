@@ -149,6 +149,10 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
   node_info[(2*n+2*n_recomb):node_max, 4] <- TRUE
 
   node_info <- node_info[order(node_info[, 2]), ]
+
+  # Add variables for searching node_info[, 1]
+  ord_node_info_1 <- order(node_info[, 1])
+
   # recombination nodes on every edge
   recomb_node <- lapply(1:(2*n - 1), function(n){
     ClonalOrigin_nodes(recomb_edge, n)
@@ -170,7 +174,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
         leaf_node[1] <- node_info[leaf_index[1], 1]
       } else {
         leaf_node[1] <- clonal_edge[leaf_edge[1], 2]
-        leaf_index[1] <- which(leaf_node[1]==node_info[, 1])
+        leaf_index[1] <- ord_node_info_1[leaf_node[1]]
       }
       if (length(recomb_node[[leaf_edge[2]]])) {
         # target node is tail(recomb_node[[leaf_edge[2]]], 1)
@@ -179,7 +183,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
         leaf_node[2] <- node_info[leaf_index[2], 1]
       } else {
         leaf_node[2] <- clonal_edge[leaf_edge[2], 2]
-        leaf_index[2] <- which(leaf_node[2]==node_info[, 1])
+        leaf_index[2] <- ord_node_info_1[leaf_node[2]]
       }
 
       # append edges
@@ -203,7 +207,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
       } else {
         leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
       }
-      leaf_index <- which(leaf_node==node_info[, 1])
+      leaf_index <- ord_node_info_1[leaf_node]
 
       # append edges
       edge_matrix[c(edge_index, edge_index+1), 1] <- c(i, i+1)
@@ -236,7 +240,7 @@ ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
         leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
       }
       leaf_index <- rep(NA, 2)
-      leaf_index[1] <- which(leaf_node==node_info[, 1])
+      leaf_index[1] <- ord_node_info_1[leaf_node]
       leaf_index[2] <- which(node_info[, 3]==(-node_info[i, 3])) + 1
 
       # append edges
