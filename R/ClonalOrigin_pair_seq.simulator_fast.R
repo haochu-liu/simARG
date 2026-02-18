@@ -34,7 +34,7 @@ ClonalOrigin_pair_seq.simulator_fast <- function(tree, rho_site, theta_site,
     v_g3 <- rep(NA, N)
     for (i in 1:N) {
       ARG <- ClonalOrigin_pair_seq_fast(tree, rho_site, L, delta, k_vec[j])
-      ARG_mutated <- FSM_mutation_fast(ARG, theta_site, binary=TRUE)
+      ARG_mutated <- FSM_mutation_fast(ARG, theta_site)
       mat <- ARG_mutated$node_site[1:tree_width, ]
 
       v_r[i] <- LD_r(mat)
