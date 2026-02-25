@@ -19,7 +19,8 @@ Imports:
     Matrix,
     Rcpp,
     rlang,
-    tibble
+    tibble,
+    actuar
 Suggests: 
     ape
 LinkingTo: 
