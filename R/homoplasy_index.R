@@ -32,7 +32,33 @@ homoplasy_index <- function(ARG) {
 
     # Compute actual changes
     s_site <- 0
-
+    site_list <- setNames(rep(list(NA), length(node_vec)), node_vec)
+    site_list[1:n_leaf] <- as.integer(node_site_vec[1:n_leaf])
+    for (i in (n_leaf+1):length(node_vec)) {
+      parent_node <- node_vec[i]
+      node_index <- which(ARG_site$edge[, 1] == parent_node)
+      if (length(node_index) == 2) {
+        # Coalescent structure
+        children_node <- ARG_site$edge[node_index, 2]
+        child_1 <- site_list[[as.character(children_node[1])]]
+        child_2 <- site_list[[as.character(children_node[2])]]
+        intersec <- intersect(child_1, child_2)
+        if (length(intersec) == 0) {
+          # intersection is empty -> mutation
+          site_list[[as.character(parent_node)]] <- union(child_1, child_2)
+          s_site <- s_site + 1
+        } else {
+          # intersection is not empty -> no mutation
+          site_list[[as.character(parent_node)]] <- intersec
+        }
+      } else if (length(node_index) == 1) {
+        # Recombination structure
+        children_node <- ARG_site$edge[node_index, 2]
+        site_list[[as.character(parent_node)]] <- site_list[[as.character(children_node)]]
+      }
+    }
+    s_vec[site_loc] <- s_site
   }
 
+  hi <- 1 - sum(m_vec) / sum(s_vec)
 }
