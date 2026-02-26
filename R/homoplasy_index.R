@@ -61,4 +61,6 @@ homoplasy_index <- function(ARG) {
   }
 
   hi <- 1 - sum(m_vec) / sum(s_vec)
+  if ((sum(m_vec) == 0) & (sum(s_vec) == 0)) {hi <- 0}
+  return(hi)
 }
