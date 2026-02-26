@@ -24,5 +24,5 @@ No \code{node} dataframe, simulate \code{node_site} through the tree.
 }
 \examples{
 ARG <- FSM_ARG(20L, 1, 100L)
-ARG_mutation <- FSM_mutation_fast(ARG, 2)
+ARG_mutation <- FSM_mutation_truncated(ARG, 2)
 }

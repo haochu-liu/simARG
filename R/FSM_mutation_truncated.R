@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' ARG <- FSM_ARG(20L, 1, 100L)
-#' ARG_mutation <- FSM_mutation_fast(ARG, 2)
+#' ARG_mutation <- FSM_mutation_truncated(ARG, 2)
 FSM_mutation_truncated <- function(ARG, theta_site) {
   if (!inherits(ARG, "FSM_ARG")) {
     cli::cli_abort("Object must be of class 'FSM_ARG'")
