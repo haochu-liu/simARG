@@ -16,8 +16,8 @@ A numerical value, homoplasy index.
 Compute homoplasy index from ARG and sequence data.
 }
 \examples{
-tree <- clonal_genealogy(15L)
-ARG <- ClonalOrigin_pair_seq_fast(tree, 0.5, 100L, 5, c(10L, 20L, 70L))
+tree <- clonal_genealogy(10L)
+ARG <- ClonalOrigin_pair_seq_fast(tree, 0.5, 100L, 5, 10L)
 ARG_mutated <- FSM_mutation_fast(ARG, 0.3)
 hi <- homoplasy_index(ARG_mutated)
 }

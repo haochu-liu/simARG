@@ -13,10 +13,13 @@ local_tree_FSM <- function(ARG, location) {
   ARG$edge_mat <- ARG$edge_mat[keep_edge, ]
   ARG$edge_index <- edge_index[keep_edge]
 
+  # Delete long root edges
   ARG$edge <- ARG$edge[order(ARG$edge[, 1]), ]
   duplicated_edge <- duplicated(ARG$edge[, 1]) | duplicated(ARG$edge[, 1], fromLast = T)
   last_duplicated <- tail(which(duplicated_edge), 1)
   ARG$edge <- ARG$edge[1:last_duplicated, ]
+  ARG$edge_mat <- ARG$edge_mat[1:last_duplicated, ]
+  ARG$edge_index <- edge_index[1:last_duplicated]
 
   class(ARG) <- "localtree"
   return(ARG)
