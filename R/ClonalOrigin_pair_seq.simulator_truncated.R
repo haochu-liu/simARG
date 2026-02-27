@@ -10,7 +10,7 @@
 #' @param delta Numeric, delta is the mean of recombinant segment length.
 #' @param N Number of pairs to simulate.
 #' @param k_vec A vector for the distance values between two sites. Default is 50, 200, 2000.
-#' @return A 7 dimension vector as the summary statistics of simulations.
+#' @return A 8 dimension vector as the summary statistics of simulations.
 #' @export
 #'
 #' @examples
@@ -26,8 +26,9 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
     cli::cli_abort("`k_vec` must be a vector of three integer values!")
   }
 
-  s_vec <- rep(NA, 7)
+  s_vec <- rep(NA, 8)
   tree_width <- tree$n
+  v_h <- rep(NA, N*3)
   v_s <- rep(NA, N*3)
   theta <- theta_site * 2
   for (j in 1:3) {
@@ -50,12 +51,14 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
 
       v_r[i] <- LD_r(mat)
       v_g3[i] <- G3_test(mat)
+      v_h[i+(j-1)*N] <- homoplasy_index(ARG_mutated)
       v_s[i+(j-1)*N] <- any(as.logical(mat[, 1]))
     }
     s_vec[j] <- mean(v_r)
     s_vec[j+3] <- mean(v_g3)
   }
-  s_vec[7] <- mean(v_s)
+  s_vec[7] <- mean(v_h)
+  s_vec[8] <- mean(v_s)
 
   return(s_vec)
 }

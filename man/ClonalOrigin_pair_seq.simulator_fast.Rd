@@ -30,7 +30,7 @@ ClonalOrigin_pair_seq.simulator_fast(
 \item{k_vec}{A vector for the distance values between two sites. Default is 50, 200, 2000.}
 }
 \value{
-A 7 dimension vector as the summary statistics of simulations.
+A 8 dimension vector as the summary statistics of simulations.
 }
 \description{
 Simulate pairs of sites in the ClonalOrigin approximation from a given clonal tree.
