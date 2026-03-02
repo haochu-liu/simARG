@@ -30,7 +30,6 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
   tree_width <- tree$n
   v_h <- rep(NA, N*3)
   v_s <- rep(NA, N*3)
-  theta <- theta_site * 2
   for (j in 1:3) {
     v_r <- rep(NA, N)
     v_g3 <- rep(NA, N)
@@ -39,8 +38,10 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
     for (i in 1:N) {
       ARG_i <- ClonalOrigin_pair_seq_fast(tree, rho_site, L, delta, k_vec[j])
       arg_list[[i]] <- ARG_i
-      arg_i_length <- sum(ARG_i$edge[, 3])
-      log_weight[i] <- pexp(arg_i_length, rate = (theta / 2), log.p = TRUE)
+      arg_1_length <- sum(ARG_i$edge[ARG$edge_mat[, 1], 3])
+      arg_2_length <- sum(ARG_i$edge[ARG$edge_mat[, 2], 3])
+      log_weight[i] <- pexp(arg_1_length, rate = (theta_site / 2), log.p = TRUE) +
+        pexp(arg_2_length, rate = (theta_site / 2), log.p = TRUE)
     }
 
     sampled_values <- sample(1:N, N, replace=TRUE, prob=exp(log_weight))
