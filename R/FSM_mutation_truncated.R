@@ -19,27 +19,27 @@ FSM_mutation_truncated <- function(ARG, theta_site) {
     cli::cli_abort("Object must be of class 'FSM_ARG'")
   }
 
-  theta <- theta_site * ncol(ARG$node_mat)
-  l <- sum(ARG$edge[, 3])
-  n <- actuar::rztpois(n = 1, lambda = theta*l/2) # truncated Poisson distribution
+  num_site <-  ncol(ARG$node_mat)
+  n_vec <- rep(NA, num_site)
+  mutate_edge <- c()
+  mutate_site <- c()
 
   ARG$node_site <- matrix(FALSE, nrow=nrow(ARG$node_mat), ncol=ncol(ARG$node_mat))
 
-  # Store mutations
-  mutate_edge <- sample(1:nrow(ARG$edge), n,
-                        replace=TRUE, prob=ARG$edge[, 3])
-  mutate_site <- sample(1:ncol(ARG$node_mat), n, replace=TRUE)
-  keep_mutation <- c()
-
-  # ignore mutations not in the edge material
-  for (i in 1:n) {
-    if (ARG$edge_mat[mutate_edge[i], mutate_site[i]]) {
-      keep_mutation <- c(keep_mutation, i)
-    }
+  # Simulate mutations by sites
+  for (i in 1:num_site) {
+    # Length of local tree without reduction
+    local_edge <- which(ARG$edge_mat[, i])
+    local_length <- ARG$edge[local_edge, 3]
+    # Truncated Poisson distribution
+    local_n <- actuar::rztpois(n=1, lambda=theta_site*sum(local_length)/2)
+    n_vec[i] <- local_n
+    mutate_site <- c(mutate_site, rep(i, local_n))
+    # Simulate edges
+    mutate_edge <- c(mutate_site, sample(local_edge, local_n,
+                                         replace=TRUE, prob=local_length))
   }
-  mutate_edge <- mutate_edge[keep_mutation]
-  mutate_site <- mutate_site[keep_mutation]
-  if (!length(keep_mutation)) {return(ARG)}
+  n <- sum(n_vec)
 
   # simulate the mutations at every node
   for (i in nrow(ARG$edge):1) {
