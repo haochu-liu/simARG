@@ -25,10 +25,7 @@ FSM_mutation_truncated <- function(ARG, theta_site) {
 
   ARG$node_site <- matrix(FALSE, nrow=nrow(ARG$node_mat), ncol=ncol(ARG$node_mat))
 
-  # if there is no mutation
-  if (n == 0) {return(ARG)}
-
-  # if there are mutations
+  # Store mutations
   mutate_edge <- sample(1:nrow(ARG$edge), n,
                         replace=TRUE, prob=ARG$edge[, 3])
   mutate_site <- sample(1:ncol(ARG$node_mat), n, replace=TRUE)
