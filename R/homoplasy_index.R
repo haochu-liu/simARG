@@ -28,7 +28,8 @@ homoplasy_index <- function(ARG) {
     node_site_vec <- ARG_site$node_site[node_vec, site_loc]
 
     # Compute minimum possible changes
-    if (any(node_site_vec[1:n_leaf])) {m_vec[site_loc] <- 1}
+    # if (any(node_site_vec[1:n_leaf])) {m_vec[site_loc] <- 1}
+    if (any(node_site_vec[1:n_leaf]) && !all(node_site_vec[1:n_leaf])) {m_vec[site_loc] <- 1}
 
     # Compute actual changes
     s_site <- 0
