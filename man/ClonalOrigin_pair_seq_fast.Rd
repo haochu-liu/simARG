@@ -25,6 +25,6 @@ Simulate coalescent an recombination events by ClonalOrigin algorithm at two sit
 Optimize data storage and searching.
 }
 \examples{
-ARG1 <- ClonalOrigin_pair_seq(tree, 0.5, 100L, 5, 20L)
-ARG2 <- ClonalOrigin_pair_seq(tree, 1, 10L, 1, 5L)
+ARG1 <- ClonalOrigin_pair_seq_fast(tree, 0.5, 100L, 5, 20L)
+ARG2 <- ClonalOrigin_pair_seq_fast(tree, 1, 10L, 1, 5L)
 }

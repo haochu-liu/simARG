@@ -12,8 +12,8 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_pair_seq(tree, 0.5, 100L, 5, 20L)
-#' ARG2 <- ClonalOrigin_pair_seq(tree, 1, 10L, 1, 5L)
+#' ARG1 <- ClonalOrigin_pair_seq_fast(tree, 0.5, 100L, 5, 20L)
+#' ARG2 <- ClonalOrigin_pair_seq_fast(tree, 1, 10L, 1, 5L)
 ClonalOrigin_pair_seq_fast <- function(tree, rho_site, L, delta, k) {
   if (!inherits(tree, "clonal_tree")) {
     cli::cli_abort("Object must be of class 'clonal_tree'")

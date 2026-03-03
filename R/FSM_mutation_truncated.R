@@ -36,10 +36,9 @@ FSM_mutation_truncated <- function(ARG, theta_site) {
     n_vec[i] <- local_n
     mutate_site <- c(mutate_site, rep(i, local_n))
     # Simulate edges
-    mutate_edge <- c(mutate_site, sample(local_edge, local_n,
+    mutate_edge <- c(mutate_edge, sample(local_edge, local_n,
                                          replace=TRUE, prob=local_length))
   }
-  n <- sum(n_vec)
 
   # simulate the mutations at every node
   for (i in nrow(ARG$edge):1) {
