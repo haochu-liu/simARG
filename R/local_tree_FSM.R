@@ -7,11 +7,10 @@
 #' @return `localtree` object; Local tree at a chosen site.
 local_tree_FSM <- function(ARG, location) {
   keep_edge <- which(as.logical(ARG$edge_mat[, location]))
-  edge_index <- 1:nrow(ARG$edge)
 
   ARG$edge <- ARG$edge[keep_edge, ]
   ARG$edge_mat <- ARG$edge_mat[keep_edge, ]
-  ARG$edge_index <- edge_index[keep_edge]
+  ARG$edge_index <- keep_edge
 
   # Delete long root edges
   ARG$edge <- ARG$edge[order(ARG$edge[, 1]), ]
