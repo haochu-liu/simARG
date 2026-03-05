@@ -53,7 +53,7 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
       v_r[i] <- LD_r(mat)
       v_g3[i] <- G3_test(mat)
       v_h[i+(j-1)*N] <- homoplasy_index(ARG_mutated)
-      v_s[i+(j-1)*N] <- any(as.logical(mat[, 1]))
+      v_s[i+(j-1)*N] <- mean(colSums(mat) > 0 & colSums(mat) < nrow(mat))
     }
     s_vec[j] <- mean(v_r)
     s_vec[j+3] <- mean(v_g3)
