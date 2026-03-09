@@ -26,10 +26,11 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
     cli::cli_abort("`k_vec` must be a vector of three integer values!")
   }
 
-  s_vec <- rep(NA, 8)
+  s_vec <- rep(NA, 9)
   tree_width <- tree$n
   v_h <- rep(NA, N*3)
   v_s <- rep(NA, N*3)
+  v_w <- rep(NA, N*3)
   for (j in 1:3) {
     v_r <- rep(NA, N)
     v_g3 <- rep(NA, N)
@@ -54,12 +55,14 @@ ClonalOrigin_pair_seq.simulator_truncated <- function(tree, rho_site, theta_site
       v_g3[i] <- G3_test(mat)
       v_h[i+(j-1)*N] <- homoplasy_index(ARG_mutated)
       v_s[i+(j-1)*N] <- mean(colSums(mat) > 0 & colSums(mat) < nrow(mat))
+      v_w[i+(j-1)*N] <- exp(log_weight[sampled_values[i]])
     }
     s_vec[j] <- mean(v_r)
     s_vec[j+3] <- mean(v_g3)
   }
   s_vec[7] <- mean(v_h)
   s_vec[8] <- mean(v_s)
+  s_vec[9] <- mean(v_w)
 
   return(s_vec)
 }
