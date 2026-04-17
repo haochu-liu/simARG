@@ -100,7 +100,7 @@ ClonalOrigin_ARG_based <- function(n, rho_site, L, delta, node_max=1000,
         leaf_node <- sample(clonal_pool, size=1, replace=FALSE)
       }
 
-      x <- which(runif(1) < probstartcum)[1]
+      x <- which.max(probstartcum > runif(1))
       y <- min(x + rgeom(1, 1/delta), L)
 
       if (optimise_recomb & !any(node_mat[leaf_node, x:y])) {next}
