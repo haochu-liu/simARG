@@ -14,9 +14,9 @@
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_tree_seq(tree, 0.5, 100L, 5, 20L)
-#' ARG2 <- ClonalOrigin_tree_seq(tree, 1, 10L, 1, 5L)
-ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
+#' ARG1 <- ClonalOrigin_tree_seq_fast(tree, 0.5, 100L, 5, 20L)
+#' ARG2 <- ClonalOrigin_tree_seq_fast(tree, 1, 10L, 1, 5L)
+ClonalOrigin_tree_seq_fast <- function(tree, rho_site, L, delta, k) {
   if (!inherits(tree, "clonal_tree")) {
     cli::cli_abort("Object must be of class 'clonal_tree'")
   } else if (!rlang::is_integer(L, n=1)) {
@@ -51,15 +51,12 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
     } else {
       survive_index <- which(recomb_edge[1:n_recomb, 6] == (i-1))
       R_new <- rpois(1, rho_site*tree_length/2)
-      if (length(survive_index) >= 0) {
-        R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
-        if (length(survive_index) == 1) {
-          remain_index <- survive_index
-        } else {
-          remain_index <- sample(survive_index, R_old)
-        }
+
+      R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
+      if (length(survive_index) == 1) {
+        remain_index <- survive_index
       } else {
-        R_old <- 0
+        remain_index <- sample(survive_index, R_old)
       }
     }
 
