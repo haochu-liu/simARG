@@ -15,19 +15,22 @@ colnames(recomb_edge) <- c("b_edge", "b_height",
 
 # Add recombination sequentially
 n_recomb <- 0
-for (i in 1:2) {
+for (i in 1:k) {
   if (i == 1) {
     R_new <- rpois(1, rho_site*delta*tree_length/2)
     R_old <- 0
-  } else { # i == 2
-    survive_index <- which(recomb_edge[1:n_recomb, 6] == 1)
-    delta2 <- sum((1 - 1/delta)^c(0:(k-1)))
-    R_new <- rpois(1, rho_site*delta2*tree_length/2)
-    R_old <- rbinom(1, length(survive_index), (1 - 1/delta)^k)
-    if (length(survive_index) == 1) {
-      remain_index <- survive_index
+  } else {
+    survive_index <- which(recomb_edge[1:n_recomb, 6] == (i-1))
+    R_new <- rpois(1, rho_site*tree_length/2)
+    if (length(survive_index) >= 0) {
+      R_old <- rbinom(1, length(survive_index), (1 - 1/delta))
+      if (length(survive_index) == 1) {
+        remain_index <- survive_index
+      } else {
+        remain_index <- sample(survive_index, R_old)
+      }
     } else {
-      remain_index <- sample(survive_index, R_old)
+      R_old <- 0
     }
   }
 

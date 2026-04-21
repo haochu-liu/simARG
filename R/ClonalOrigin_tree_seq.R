@@ -82,7 +82,7 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
         i_above_b <- c(0, t_above_b[t_above_b >= 0])
         i_above_b <- i_above_b[2:length(i_above_b)] - i_above_b[1:(length(i_above_b)-1)]
         cuml_above_b <- cumsum(i_above_b * (1+length(i_above_b)):2)
-        num_lineage <- (1+length(i_above_b)) - length(which(a_rexp[j] > cuml_above_b))
+        num_lineage <- (1+length(i_above_b)) - sum(a_rexp[j] > cuml_above_b)
         if (num_lineage == (1+length(i_above_b))) {
           recomb_edge[n_recomb+j, 4] <- a_rexp[j] / num_lineage + recomb_edge[n_recomb+j, 2]
         } else {
@@ -93,7 +93,7 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
         # simulate a_edge
         if (num_lineage > 1) {
           pool_edge <- which((clonal_node_height[clonal_edge[, 1]] >= recomb_edge[n_recomb+j, 4]) &
-                               (clonal_node_height[clonal_edge[, 2]] < recomb_edge[n_recomb+j, 4]))
+                             (clonal_node_height[clonal_edge[, 2]] <  recomb_edge[n_recomb+j, 4]))
           recomb_edge[n_recomb+j, 3] <- sample(pool_edge, 1, replace=TRUE)
         } else {
           recomb_edge[n_recomb+j, 3] <- 2*n - 1
@@ -107,6 +107,7 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
 
     n_recomb <- n_recomb + R_new
   }
+
   if (n_recomb == 0) {
     node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=k)
     edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=k)
