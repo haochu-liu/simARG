@@ -43,7 +43,7 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
 
   # Add recombination sequentially
   n_recomb <- 0
-  for (i in 1:L) {
+  for (i in 1:k) {
     if (i == 1) {
       R_new <- rpois(1, rho_site*delta*tree_length/2)
       R_old <- 0
@@ -64,8 +64,8 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
 
     if (R_new > 0) {
       if (n_recomb+R_new >= nrow_max) {
-        recomb_edge <- rbind(recomb_edge, matrix(NA, nrow=node_max, ncol=6))
-        nrow_max <- 2 * nrow_max
+        recomb_edge <- rbind(recomb_edge, matrix(NA, nrow=(nrow_max+n_recomb+R_new), ncol=6))
+        nrow_max <- 2 * nrow_max + n_recomb + R_new
       }
 
       recomb_edge[(n_recomb+1):(n_recomb+R_new), c(5, 6)] <- i
@@ -108,8 +108,8 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
     n_recomb <- n_recomb + R_new
   }
   if (n_recomb == 0) {
-    node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=L)
-    edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=L)
+    node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=k)
+    edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=k)
     ARG = list(edge=clonal_edge,
                edge_mat=edge_mat,
                node_height=clonal_node_height,
@@ -129,7 +129,7 @@ ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
   edge_matrix <- matrix(NA, nrow=edge_max, ncol=3) # root and leaf nodes, length
   colnames(edge_matrix) <- c("node1", "node2", "length")
   edge_mat_index <- rep(NA, edge_max)              # edge material index
-  node_mat <- matrix(NA, nrow=node_max, ncol=L)
+  node_mat <- matrix(NA, nrow=node_max, ncol=k)
   node_info <- matrix(NA, nrow=node_max, ncol=4)
   colnames(node_info) <- c("index", "height", "recomb", "clonal")
   node_mat[1:n, ] <- TRUE
