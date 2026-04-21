@@ -1,26 +1,10 @@
-if (n_recomb == 0) {
-  node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=k)
-  edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=k)
-  ARG = list(edge=clonal_edge,
-             edge_mat=edge_mat,
-             node_height=clonal_node_height,
-             node_mat=node_mat,
-             node_clonal=rep(TRUE, (2*n-1)),
-             sum_time=max(clonal_node_height),
-             n=n, rho=rho, L=L, delta=delta)
-  class(ARG) <- "FSM_ARG"
-  return(ARG)
-} else {
-  recomb_edge <- recomb_edge[1:n_recomb, , drop = FALSE]
-}
-
 # recombination segment and ancestral material
 node_max <- 2*n - 1 + 3*n_recomb
 edge_max <- 2*(n - 1) + 4*n_recomb
 edge_matrix <- matrix(NA, nrow=edge_max, ncol=3) # root and leaf nodes, length
 colnames(edge_matrix) <- c("node1", "node2", "length")
 edge_mat_index <- rep(NA, edge_max)              # edge material index
-node_mat <- matrix(NA, nrow=node_max, ncol=k)
+node_mat <- matrix(NA, nrow=node_max, ncol=2)
 node_info <- matrix(NA, nrow=node_max, ncol=4)
 colnames(node_info) <- c("index", "height", "recomb", "clonal")
 node_mat[1:n, ] <- TRUE
@@ -43,6 +27,13 @@ node_info[(2*n+2*n_recomb):node_max, 3] <- 1:n_recomb
 node_info[(2*n+2*n_recomb):node_max, 4] <- TRUE
 
 node_info <- node_info[order(node_info[, 2]), ]
+
+# Add variables for searching node_info[, 1]
+ord_node_info_1 <- order(node_info[, 1])
+
+# Create a list for searching clonal nodes
+clonal_edge_list <- split(seq_along(clonal_edge[, 1]), clonal_edge[, 1])
+
 # recombination nodes on every edge
 recomb_node <- lapply(1:(2*n - 1), function(n){
   ClonalOrigin_nodes(recomb_edge, n)
@@ -54,26 +45,26 @@ repeat {
   if (node_info[i, 3]==0) {
     # clonal tree
     node_index <- node_info[i, 1]
-    leaf_edge <- which(clonal_edge[, 1] == node_index)
+    leaf_edge <- clonal_edge_list[[as.character(node_index)]]
     leaf_index <- rep(NA, 2)
     leaf_node <- rep(NA, 2)
     if (length(recomb_node[[leaf_edge[1]]])) {
       # target node is tail(recomb_node[[leaf_edge[1]]], 1)
       tar_node <- tail(recomb_node[[leaf_edge[1]]], 1)
-      leaf_index[1] <- which(tar_node==node_info[, 3])
+      leaf_index[1] <- match(tar_node, node_info[, 3])
       leaf_node[1] <- node_info[leaf_index[1], 1]
     } else {
       leaf_node[1] <- clonal_edge[leaf_edge[1], 2]
-      leaf_index[1] <- which(leaf_node[1]==node_info[, 1])
+      leaf_index[1] <- ord_node_info_1[leaf_node[1]]
     }
     if (length(recomb_node[[leaf_edge[2]]])) {
       # target node is tail(recomb_node[[leaf_edge[2]]], 1)
       tar_node <- tail(recomb_node[[leaf_edge[2]]], 1)
-      leaf_index[2] <- which(tar_node==node_info[, 3])
+      leaf_index[2] <- match(tar_node, node_info[, 3])
       leaf_node[2] <- node_info[leaf_index[2], 1]
     } else {
       leaf_node[2] <- clonal_edge[leaf_edge[2], 2]
-      leaf_index[2] <- which(leaf_node[2]==node_info[, 1])
+      leaf_index[2] <- ord_node_info_1[leaf_node[2]]
     }
 
     # append edges
@@ -91,13 +82,15 @@ repeat {
     # recombination edge out node
     node_index <- node_info[c(i, i+1L), 1]
     leaf_edge <- recomb_edge[abs(node_info[i, 3]), 1]
-    tar_node <- which(recomb_node[[leaf_edge]]==node_info[i, 3])
+    tar_node <- match(node_info[i, 3], recomb_node[[leaf_edge]])
     if (tar_node==1) {
       leaf_node <- clonal_edge[leaf_edge, 2]
     } else {
-      leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
+      leaf_node <- node_info[match(recomb_node[[leaf_edge]][tar_node-1],
+                                   node_info[, 3]),
+                             1]
     }
-    leaf_index <- which(leaf_node==node_info[, 1])
+    leaf_index <- ord_node_info_1[leaf_node]
 
     # append edges
     edge_matrix[c(edge_index, edge_index+1), 1] <- c(i, i+1)
@@ -119,7 +112,7 @@ repeat {
     # recombination edge in node
     node_index <- node_info[i, 1]
     leaf_edge <- recomb_edge[node_info[i, 3], 3]
-    tar_node <- which(recomb_node[[leaf_edge]]==node_info[i, 3])
+    tar_node <- match(node_info[i, 3], recomb_node[[leaf_edge]])
     if (tar_node==1) {
       if (leaf_edge==(2*n - 1)) {
         leaf_node <- 2*n - 1
@@ -127,11 +120,13 @@ repeat {
         leaf_node <- clonal_edge[leaf_edge, 2]
       }
     } else {
-      leaf_node <- node_info[which(recomb_node[[leaf_edge]][tar_node-1]==node_info[, 3]), 1]
+      leaf_node <- node_info[match(recomb_node[[leaf_edge]][tar_node-1],
+                                   node_info[, 3]),
+                             1]
     }
     leaf_index <- rep(NA, 2)
-    leaf_index[1] <- which(leaf_node==node_info[, 1])
-    leaf_index[2] <- which(node_info[, 3]==(-node_info[i, 3])) + 1
+    leaf_index[1] <- ord_node_info_1[leaf_node]
+    leaf_index[2] <- match((-node_info[i, 3]), node_info[, 3]) + 1
 
     # append edges
     edge_matrix[c(edge_index, edge_index+1), 1] <- i
@@ -158,3 +153,4 @@ ARG = list(edge=edge_matrix,
            n=n, rho=rho, L=L, delta=delta)
 class(ARG) <- "FSM_ARG"
 return(ARG)
+}
