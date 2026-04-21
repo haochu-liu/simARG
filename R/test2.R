@@ -1,6 +1,6 @@
 if (n_recomb == 0) {
-  node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=2)
-  edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=2)
+  node_mat <- matrix(TRUE, nrow=(2*n-1), ncol=k)
+  edge_mat <- matrix(TRUE, nrow=2*(n-1), ncol=k)
   ARG = list(edge=clonal_edge,
              edge_mat=edge_mat,
              node_height=clonal_node_height,
@@ -20,7 +20,7 @@ edge_max <- 2*(n - 1) + 4*n_recomb
 edge_matrix <- matrix(NA, nrow=edge_max, ncol=3) # root and leaf nodes, length
 colnames(edge_matrix) <- c("node1", "node2", "length")
 edge_mat_index <- rep(NA, edge_max)              # edge material index
-node_mat <- matrix(NA, nrow=node_max, ncol=2)
+node_mat <- matrix(NA, nrow=node_max, ncol=k)
 node_info <- matrix(NA, nrow=node_max, ncol=4)
 colnames(node_info) <- c("index", "height", "recomb", "clonal")
 node_mat[1:n, ] <- TRUE
