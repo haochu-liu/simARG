@@ -4,16 +4,18 @@
 \alias{ClonalOrigin_tree_seq}
 \title{An approximated ancestral recombination graph (ARG) using ClonalOrigin algorithm}
 \usage{
-ClonalOrigin_tree_seq(n, rho_site, L, delta)
+ClonalOrigin_tree_seq(tree, rho_site, L, delta, k)
 }
 \arguments{
-\item{n}{An integer for the number of leaf lineages.}
+\item{tree}{The clonal genealogy.}
 
 \item{rho_site}{The recombination parameter per site.}
 
 \item{L}{An integer for the number of sites.}
 
 \item{delta}{Numeric, delta is the mean of recombinant segment length.}
+
+\item{k}{Length of a sequence.}
 }
 \value{
 A list containing clonal tree and recombination edges.
@@ -21,8 +23,9 @@ A list containing clonal tree and recombination edges.
 \description{
 Simulate coalescent an recombination events by ClonalOrigin algorithm.
 Recombinations are added to a clonal tree to construct an ARG.
+Take tree as an input.
 }
 \examples{
-ARG1 <- ClonalOrigin_tree_seq(100L, 0.5, 100L, 5)
-ARG2 <- ClonalOrigin_tree_seq(5L, 1, 10L, 1)
+ARG1 <- ClonalOrigin_tree_seq(tree, 0.5, 100L, 5, 20L)
+ARG2 <- ClonalOrigin_tree_seq(tree, 1, 10L, 1, 5L)
 }

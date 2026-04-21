@@ -2,61 +2,34 @@
 #'
 #' Simulate coalescent an recombination events by ClonalOrigin algorithm.
 #' Recombinations are added to a clonal tree to construct an ARG.
+#' Take tree as an input.
 #'
-#' @param n An integer for the number of leaf lineages.
+#' @param tree The clonal genealogy.
 #' @param rho_site The recombination parameter per site.
 #' @param L An integer for the number of sites.
 #' @param delta Numeric, delta is the mean of recombinant segment length.
+#' @param k Length of a sequence.
 #' @return A list containing clonal tree and recombination edges.
 #' @export
 #'
 #' @examples
-#' ARG1 <- ClonalOrigin_tree_seq(100L, 0.5, 100L, 5)
-#' ARG2 <- ClonalOrigin_tree_seq(5L, 1, 10L, 1)
-ClonalOrigin_tree_seq <- function(n, rho_site, L, delta) {
-  if (!rlang::is_integer(n, n=1)) {
-    cli::cli_abort("`n` must be a single integer!")
+#' ARG1 <- ClonalOrigin_tree_seq(tree, 0.5, 100L, 5, 20L)
+#' ARG2 <- ClonalOrigin_tree_seq(tree, 1, 10L, 1, 5L)
+ClonalOrigin_tree_seq <- function(tree, rho_site, L, delta, k) {
+  if (!inherits(tree, "clonal_tree")) {
+    cli::cli_abort("Object must be of class 'clonal_tree'")
   } else if (!rlang::is_integer(L, n=1)) {
     cli::cli_abort("`L` must be a single integer!")
+  } else if (!rlang::is_integer(k, n=1)) {
+    cli::cli_abort("`k` must be a single integer!")
+  } else if (delta <= 0) {
+    cli::cli_abort("`delta` must be greater than zero!")
   }
 
-  k = n
-  t_sum <- 0
   rho <- L * rho_site
-
-  # Initialize varables for clonal tree
-  clonal_edge <- matrix(NA, nrow=2*(n-1), ncol=3) # root and leaf nodes, length
-  colnames(clonal_edge) <- c("node1", "node2", "length")
-  clonal_node_height <- rep(NA, 2*n-1)            # node height to recent time
-  clonal_node_height[1:n] <- 0                    # initialize first n nodes
-
-  # Initialize variables and vector
-  edge_index <- 1L
-  node_index <- as.integer(n + 1)
-  pool <- as.integer(1:n)
-
-  # clonal tree by coalescent only
-  while (k > 1) {
-    # sample a new event time
-    event_time <- rexp(1, rate=k*(k-1)/2)
-    t_sum <- t_sum + event_time
-    # coalescent event
-    leaf_node <- sample(pool, size=2, replace=FALSE)
-
-    # append edges
-    clonal_edge[c(edge_index, edge_index+1), 1] <- node_index
-    clonal_edge[c(edge_index, edge_index+1), 2] <- leaf_node
-    clonal_edge[c(edge_index, edge_index+1), 3] <- t_sum-clonal_node_height[leaf_node]
-
-    # append root node
-    clonal_node_height[node_index] <- t_sum
-
-    # updates for iteration
-    pool <- c(setdiff(pool, leaf_node), node_index)
-    edge_index <- edge_index + 2L
-    node_index <- node_index + 1L
-    k <- k - 1
-  }
+  clonal_edge <- tree$edge
+  clonal_node_height <- tree$node
+  n <- tree$n
 
   # number of recombination edges
   tree_length <- sum(clonal_edge[, 3])
